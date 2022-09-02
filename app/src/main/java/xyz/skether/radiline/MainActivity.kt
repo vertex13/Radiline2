@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import xyz.skether.radiline.dependency.Dependencies
+import xyz.skether.radiline.ui.data.previewMainScreenDataHolder
 import xyz.skether.radiline.ui.theme.RadilineTheme
 import xyz.skether.radiline.ui.view.main.MainScreen
 
@@ -13,16 +15,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RadilineTheme {
-                MainScreen()
+                MainScreen(Dependencies.mainScreenDataHolder)
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun DefaultPreview() {
+private fun Preview() {
     RadilineTheme {
-        MainScreen()
+        MainScreen(previewMainScreenDataHolder())
     }
 }
