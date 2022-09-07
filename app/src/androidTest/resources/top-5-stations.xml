@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stationlist>
+    <station name="ANTENNE BAYERN" br="128" ct="Toby Romeo Leony - Crazy Love" genre="Pop"
+        id="99497996" lc="37415" mt="audio/mpeg" />
+    <station name="Dance Wave!" br="128" ct="Tracklist: https://dancewave.online" genre="Electronic"
+        id="1817772" lc="29309" mt="audio/mpeg" />
+    <station name="Dance Wave Retro!" br="128" ct="Tracklist: https://dancewave.online"
+        genre="Electronic" id="1631097" lc="20067" mt="audio/mpeg" />
+    <station name="ROCK ANTENNE" br="128" ct="Third Eye Blind - Semi-charmed life" genre="Rock"
+        id="99498012" lc="15361" mt="audio/mpeg" />
+    <station name="Joy Hits" br="128" genre="Pop" id="1836826" lc="13027" mt="audio/mpeg" />
+</stationlist>

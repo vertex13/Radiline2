@@ -1,5 +1,13 @@
 package xyz.skether.radiline.dependency
 
+import xyz.skether.radiline.BuildConfig
+import xyz.skether.radiline.data.AppState
+import xyz.skether.radiline.data.DataManager
+import xyz.skether.radiline.data.GetTopStations
+import xyz.skether.radiline.data.backend.SHOUTCAST_BASE_URL
+import xyz.skether.radiline.data.backend.SHOUTCAST_TOP_LIMIT
+import xyz.skether.radiline.data.backend.ShoutcastRetrofit
+import xyz.skether.radiline.data.backend.createShoutcastRetrofit
 import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.ui.ObserveTopStationItemData
 import xyz.skether.radiline.ui.data.TopStationsTransformer
@@ -10,25 +18,37 @@ object Dependencies {
     val mainScreenDataHolder: MainScreenDataHolder by lazy {
         MainScreenDataHolder(topPageDataHolder)
     }
-    private val topPageDataHolder: TopPageDataHolder by lazy {
-        TopPageDataHolder(observeTopStationItemData, play)
+    private val appState: AppState by lazy {
+        AppState(
+            getTopStations = getTopStations,
+            getFavoriteStations = { emptyList() }
+        )
     }
+    private val topPageDataHolder: TopPageDataHolder
+        get() = TopPageDataHolder(observeTopStationItemData, play)
     private val observeTopStationItemData: ObserveTopStationItemData by lazy {
         TopStationsTransformer(observeTopStations, observeFavoriteStationIds, observeNowPlaying)
     }
-    private val observeNowPlaying: ObserveNowPlaying by lazy {
-        { MutableObsValue(null) }
+    private val observeNowPlaying: ObserveNowPlaying
+        get() = appState::nowPlaying
+    private val observeFavoriteStations: ObserveFavoriteStations
+        get() = appState::favoriteStations
+    private val observeFavoriteStationIds: ObserveFavoriteStationIds
+        get() = appState::favoriteStationIds
+    private val observeTopStations: ObserveTopStations
+        get() = appState::topStations
+    private val play: Play
+        get() = appState::play
+    private val dataManager: DataManager by lazy {
+        DataManager(
+            shoutcastApiKey = BuildConfig.SHOUTCAST_API_KEY,
+            shoutcastTopLimit = SHOUTCAST_TOP_LIMIT,
+            shoutcastRetrofit = shoutcastRetrofit,
+        )
     }
-    private val observeFavoriteStations: ObserveFavoriteStations by lazy {
-        { MutableObsValue(emptyList()) }
+    private val shoutcastRetrofit: ShoutcastRetrofit by lazy {
+        createShoutcastRetrofit(SHOUTCAST_BASE_URL)
     }
-    private val observeFavoriteStationIds: ObserveFavoriteStationIds by lazy {
-        { MutableObsValue(emptySet()) }
-    }
-    private val observeTopStations: ObserveTopStations by lazy {
-        { MutableObsValue(emptyList()) }
-    }
-    private val play: Play by lazy {
-        {}
-    }
+    private val getTopStations: GetTopStations
+        get() = dataManager::getTopStations
 }

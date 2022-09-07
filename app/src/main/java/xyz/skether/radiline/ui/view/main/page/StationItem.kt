@@ -74,7 +74,7 @@ fun StationItem(station: StationItemData, onClick: () -> Unit) {
                 }
             )
             Text(
-                text = station.currentTrack,
+                text = station.currentTrack ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,

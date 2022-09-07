@@ -60,9 +60,10 @@ fun MainScreen(dataHolder: MainScreenDataHolder) {
         bottomBar = {
             NavigationBar {
                 Page.values().forEach { page ->
+                    val title = stringResource(page.titleId)
                     NavigationBarItem(
-                        label = { Text(text = stringResource(page.titleId)) },
-                        icon = { Icon(page.icon, null) },
+                        label = { Text(text = title) },
+                        icon = { Icon(page.icon, title) },
                         selected = currentPage == page.route,
                         onClick = {
                             currentPage = page.route
