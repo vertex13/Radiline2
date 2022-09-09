@@ -9,5 +9,6 @@ class StationXml(
     override val genre: String,
     override val currentTrack: String?,
     override val mediaType: String,
-    override val bitrate: Int
+    override val bitrate: Int,
+    override val numberOfListeners: Int,
 ) : Station

@@ -9,4 +9,5 @@ interface Station {
     val currentTrack: String?
     val mediaType: String
     val bitrate: Int
+    val numberOfListeners: Int
 }

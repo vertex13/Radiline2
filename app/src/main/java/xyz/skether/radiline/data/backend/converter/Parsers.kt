@@ -45,6 +45,7 @@ fun XmlPullParser.parseStationXml(): StationXml {
         currentTrack = getAttributeValue(ns, "ct"),
         mediaType = getAttributeValue(ns, "mt"),
         bitrate = getAttributeValue(ns, "br").toInt(),
+        numberOfListeners = getAttributeValue(ns, "lc").toInt(),
     )
     nextTag()
     require(END_TAG, ns, "station")
