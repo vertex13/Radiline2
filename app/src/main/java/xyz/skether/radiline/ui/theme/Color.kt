@@ -10,4 +10,6 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val StarColor = Color(0xFFD5D2A6)
+val FavoriteStationColor = Color(0xFFE4E1B7)
+val FavoriteStarColor = Color(0xFFCCAF14)
+val NotFavoriteStarColor = Color(0x998F8F8F)

@@ -11,16 +11,36 @@ import xyz.skether.radiline.data.backend.createShoutcastRetrofit
 import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.system.AppContext
-import xyz.skether.radiline.ui.ObserveTopStationItemData
-import xyz.skether.radiline.ui.data.TopStationsTransformer
-import xyz.skether.radiline.ui.view.main.MainScreenDataHolder
-import xyz.skether.radiline.ui.view.main.page.TopPageDataHolder
+import xyz.skether.radiline.ui.FavoriteStationItemData
+import xyz.skether.radiline.ui.GetPlayerData
+import xyz.skether.radiline.ui.PlayingStationId
+import xyz.skether.radiline.ui.TopStationItemDataWithoutFavorites
+import xyz.skether.radiline.ui.transformer.FavoriteStationItemDataImpl
+import xyz.skether.radiline.ui.transformer.GetPlayerDataImpl
+import xyz.skether.radiline.ui.transformer.PlayingStationIdImpl
+import xyz.skether.radiline.ui.transformer.TopStationItemDataWithoutFavoritesImpl
+import xyz.skether.radiline.ui.view.MainScreenDataHolder
+import xyz.skether.radiline.ui.view.PlayerDataHolder
 
 class Dependencies(
     private val appContext: AppContext,
 ) {
     val mainScreenDataHolder: MainScreenDataHolder by lazy {
-        MainScreenDataHolder(topPageDataHolder)
+        MainScreenDataHolder(
+            favoriteStationItemData = favoriteStationItemData,
+            topStationItemDataWithoutFavorites = topStationItemDataWithoutFavorites,
+            play = play,
+            playerDataHolder = playerDataHolder,
+        )
+    }
+    private val playerDataHolder: PlayerDataHolder by lazy {
+        PlayerDataHolder(
+            getPlayerData = getPlayerData,
+            playCurrent = playCurrent,
+            pause = pause,
+            addToFavorites = {},
+            removeFromFavorites = {},
+        )
     }
     private val appState: AppState by lazy {
         AppState(
@@ -28,21 +48,36 @@ class Dependencies(
             getFavoriteStations = { emptyList() }
         )
     }
-    private val topPageDataHolder: TopPageDataHolder
-        get() = TopPageDataHolder(observeTopStationItemData, play)
-    private val observeTopStationItemData: ObserveTopStationItemData by lazy {
-        TopStationsTransformer(observeTopStations, observeFavoriteStationIds, observeNowPlaying)
+    private val playingStationId: PlayingStationId by lazy {
+        PlayingStationIdImpl(getPlayer)
     }
-    private val observeNowPlaying: ObserveNowPlaying
-        get() = appState::nowPlaying
-    private val observeFavoriteStations: ObserveFavoriteStations
+    private val getPlayerData: GetPlayerData by lazy {
+        GetPlayerDataImpl(getPlayer, favoriteStationIds)
+    }
+    private val favoriteStationItemData: FavoriteStationItemData by lazy {
+        FavoriteStationItemDataImpl(favoriteStations, playingStationId)
+    }
+    private val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites by lazy {
+        TopStationItemDataWithoutFavoritesImpl(
+            topStations,
+            favoriteStationIds,
+            playingStationId
+        )
+    }
+    private val getPlayer: GetPlayer
+        get() = appState::player
+    private val favoriteStations: FavoriteStations
         get() = appState::favoriteStations
-    private val observeFavoriteStationIds: ObserveFavoriteStationIds
+    private val favoriteStationIds: FavoriteStationIds
         get() = appState::favoriteStationIds
-    private val observeTopStations: ObserveTopStations
+    private val topStations: TopStations
         get() = appState::topStations
     private val play: Play
         get() = appState::play
+    private val playCurrent: PlayCurrent
+        get() = appState::playCurrent
+    private val pause: Pause
+        get() = appState::pause
     private val dataManager: DataManager by lazy {
         DataManager(
             shoutcastApiKey = BuildConfig.SHOUTCAST_API_KEY,

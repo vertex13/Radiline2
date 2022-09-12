@@ -3,10 +3,7 @@ package xyz.skether.radiline.data
 import android.util.Log
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import xyz.skether.radiline.domain.MutableObsValue
-import xyz.skether.radiline.domain.ObsValue
-import xyz.skether.radiline.domain.Station
-import xyz.skether.radiline.domain.StationId
+import xyz.skether.radiline.domain.*
 
 typealias GetTopStations = suspend () -> List<Station>
 typealias GetFavoriteStations = suspend () -> List<Station>
@@ -17,8 +14,8 @@ class AppState(
 ) {
     private val scope = MainScope()
 
-    private val _nowPlaying = MutableObsValue<Station?>(null)
-    val nowPlaying: ObsValue<Station?> get() = _nowPlaying
+    private val _player = MutableObsValue<Player>(Player.Disabled)
+    val player: ObsValue<Player> get() = _player
 
     private val _topStations = MutableObsValue<List<Station>>(emptyList())
     val topStations: ObsValue<List<Station>> get() = _topStations
@@ -40,6 +37,14 @@ class AppState(
     }
 
     fun play(stationId: StationId) {
+        //
+    }
+
+    fun playCurrent() {
+        //
+    }
+
+    fun pause() {
         //
     }
 }

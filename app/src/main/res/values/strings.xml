@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">radiline</string>
-    <string name="page_favorites">Favorites</string>
-    <string name="page_top">Top</string>
-    <string name="page_genres">Genres</string>
-    <string name="station_item_bitrate">%1$d kbit/s</string>
+    <string name="app_name">Radiline</string>
+    <string name="favorites">Favorites</string>
+    <string name="top">Top</string>
+    <string name="bitrate">%1$d kbit/s</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
 </resources>
