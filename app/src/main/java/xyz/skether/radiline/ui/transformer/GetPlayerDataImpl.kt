@@ -1,24 +1,27 @@
 package xyz.skether.radiline.ui.transformer
 
-import xyz.skether.radiline.domain.*
+import xyz.skether.radiline.domain.GetPlayer
+import xyz.skether.radiline.domain.ObsValue
+import xyz.skether.radiline.domain.Player
+import xyz.skether.radiline.domain.combineObs
+import xyz.skether.radiline.ui.FavoriteStationNames
 import xyz.skether.radiline.ui.GetPlayerData
 import xyz.skether.radiline.ui.view.PlayerData
 
 class GetPlayerDataImpl(
     getPlayer: GetPlayer,
-    favoriteStationIds: FavoriteStationIds,
+    favoriteStationNames: FavoriteStationNames,
 ) : GetPlayerData {
 
     private val mappedValue: ObsValue<PlayerData?> = combineObs(
-        getPlayer(), favoriteStationIds()
-    ) { player, favoriteStationIds ->
+        getPlayer(), favoriteStationNames()
+    ) { player, favoriteStationNames ->
         if (player is Player.Enabled) {
             PlayerData(
-                stationId = player.station.id,
                 stationName = player.station.name,
                 currentTrack = player.station.currentTrack,
                 playerStatus = player.status,
-                inFavorites = favoriteStationIds.contains(player.station.id)
+                inFavorites = favoriteStationNames.contains(player.station.name)
             )
         } else {
             null

@@ -23,8 +23,7 @@ import xyz.skether.radiline.ui.theme.FavoriteStarColor
 import xyz.skether.radiline.ui.theme.NotFavoriteStarColor
 
 data class PlayerData(
-    val stationId: StationId,
-    val stationName: String,
+    val stationName: StationName,
     val currentTrack: String?,
     val playerStatus: Player.Status,
     val inFavorites: Boolean,
@@ -71,7 +70,7 @@ fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
                             tint = FavoriteStarColor,
                             modifier = Modifier
                                 .size(favSize)
-                                .clickable { dataHolder.removeFromFavorites(data.stationId) }
+                                .clickable { dataHolder.removeFromFavorites(data.stationName) }
                         )
                     } else {
                         Icon(
@@ -80,7 +79,7 @@ fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
                             tint = NotFavoriteStarColor,
                             modifier = Modifier
                                 .size(favSize)
-                                .clickable { dataHolder.addToFavorites(data.stationId) }
+                                .clickable { dataHolder.addToFavorites(data.stationName) }
                         )
                     }
 

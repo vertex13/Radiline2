@@ -43,7 +43,7 @@ fun MainScreen(dataHolder: MainScreenDataHolder) {
                     }
                 }
                 items(favorites, key = { it.id }, contentType = { "favorites_item" }) {
-                    StationItem(it, favCardColors) { dataHolder.play(it.id) }
+                    StationItem(it, favCardColors) { dataHolder.play(it.name) }
                 }
                 if (top.isNotEmpty()) {
                     item("top_title", "title") {
@@ -51,7 +51,7 @@ fun MainScreen(dataHolder: MainScreenDataHolder) {
                     }
                 }
                 items(top, key = { it.id }, contentType = { "top_item" }) {
-                    StationItem(it) { dataHolder.play(it.id) }
+                    StationItem(it) { dataHolder.play(it.name) }
                 }
             }
 

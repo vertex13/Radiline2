@@ -2,23 +2,17 @@ package xyz.skether.radiline.dependency
 
 import xyz.skether.radiline.BuildConfig
 import xyz.skether.radiline.data.AppState
-import xyz.skether.radiline.data.DataManager
-import xyz.skether.radiline.data.GetTopStations
 import xyz.skether.radiline.data.backend.SHOUTCAST_BASE_URL
-import xyz.skether.radiline.data.backend.SHOUTCAST_TOP_LIMIT
 import xyz.skether.radiline.data.backend.ShoutcastRetrofit
 import xyz.skether.radiline.data.backend.createShoutcastRetrofit
 import xyz.skether.radiline.data.db.AppDatabase
+import xyz.skether.radiline.data.preferences.AppSharedPreferences
+import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.system.AppContext
-import xyz.skether.radiline.ui.FavoriteStationItemData
-import xyz.skether.radiline.ui.GetPlayerData
-import xyz.skether.radiline.ui.PlayingStationId
-import xyz.skether.radiline.ui.TopStationItemDataWithoutFavorites
-import xyz.skether.radiline.ui.transformer.FavoriteStationItemDataImpl
-import xyz.skether.radiline.ui.transformer.GetPlayerDataImpl
-import xyz.skether.radiline.ui.transformer.PlayingStationIdImpl
-import xyz.skether.radiline.ui.transformer.TopStationItemDataWithoutFavoritesImpl
+import xyz.skether.radiline.system.SystemCurrentTime
+import xyz.skether.radiline.ui.*
+import xyz.skether.radiline.ui.transformer.*
 import xyz.skether.radiline.ui.view.MainScreenDataHolder
 import xyz.skether.radiline.ui.view.PlayerDataHolder
 
@@ -38,38 +32,41 @@ class Dependencies(
             getPlayerData = getPlayerData,
             playCurrent = playCurrent,
             pause = pause,
-            addToFavorites = {},
-            removeFromFavorites = {},
+            addToFavorites = addToFavorites,
+            removeFromFavorites = removeFromFavorites,
         )
     }
     private val appState: AppState by lazy {
         AppState(
-            getTopStations = getTopStations,
-            getFavoriteStations = { emptyList() }
+            currentTime = currentTime,
+            preferences = preferences,
+            shoutcastApi = shoutcastRetrofit,
+            appDatabase = appDatabase,
         )
     }
-    private val playingStationId: PlayingStationId by lazy {
-        PlayingStationIdImpl(getPlayer)
+    private val playingStationName: PlayingStationName by lazy {
+        PlayingStationNameImpl(getPlayer)
     }
     private val getPlayerData: GetPlayerData by lazy {
-        GetPlayerDataImpl(getPlayer, favoriteStationIds)
+        GetPlayerDataImpl(getPlayer, favoriteStationNames)
+    }
+    private val favoriteStationNames: FavoriteStationNames by lazy {
+        FavoriteStationNamesImpl(favoriteStations)
     }
     private val favoriteStationItemData: FavoriteStationItemData by lazy {
-        FavoriteStationItemDataImpl(favoriteStations, playingStationId)
+        FavoriteStationItemDataImpl(favoriteStations, playingStationName)
     }
     private val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites by lazy {
         TopStationItemDataWithoutFavoritesImpl(
             topStations,
-            favoriteStationIds,
-            playingStationId
+            favoriteStationNames,
+            playingStationName
         )
     }
     private val getPlayer: GetPlayer
         get() = appState::player
     private val favoriteStations: FavoriteStations
         get() = appState::favoriteStations
-    private val favoriteStationIds: FavoriteStationIds
-        get() = appState::favoriteStationIds
     private val topStations: TopStations
         get() = appState::topStations
     private val play: Play
@@ -78,20 +75,20 @@ class Dependencies(
         get() = appState::playCurrent
     private val pause: Pause
         get() = appState::pause
-    private val dataManager: DataManager by lazy {
-        DataManager(
-            shoutcastApiKey = BuildConfig.SHOUTCAST_API_KEY,
-            shoutcastTopLimit = SHOUTCAST_TOP_LIMIT,
-            shoutcastRetrofit = shoutcastRetrofit,
-            appDatabase = appDatabase,
-        )
-    }
+    private val addToFavorites: AddToFavorites
+        get() = appState::addToFavorites
+    private val removeFromFavorites: RemoveFromFavorites
+        get() = appState::removeFromFavorites
     private val shoutcastRetrofit: ShoutcastRetrofit by lazy {
-        createShoutcastRetrofit(SHOUTCAST_BASE_URL)
+        createShoutcastRetrofit(SHOUTCAST_BASE_URL, BuildConfig.SHOUTCAST_API_KEY)
     }
-    private val getTopStations: GetTopStations
-        get() = dataManager::getTopStations
     private val appDatabase: AppDatabase by lazy {
         AppDatabase.create(appContext)
+    }
+    private val preferences: Preferences by lazy {
+        AppSharedPreferences(appContext)
+    }
+    private val currentTime: CurrentTime by lazy {
+        SystemCurrentTime()
     }
 }

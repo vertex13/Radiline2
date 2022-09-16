@@ -1,25 +1,25 @@
 package xyz.skether.radiline.ui.transformer
 
-import xyz.skether.radiline.domain.FavoriteStationIds
 import xyz.skether.radiline.domain.ObsValue
 import xyz.skether.radiline.domain.TopStations
 import xyz.skether.radiline.domain.combineObs
-import xyz.skether.radiline.ui.PlayingStationId
+import xyz.skether.radiline.ui.FavoriteStationNames
+import xyz.skether.radiline.ui.PlayingStationName
 import xyz.skether.radiline.ui.TopStationItemDataWithoutFavorites
 import xyz.skether.radiline.ui.view.StationItemData
 
 class TopStationItemDataWithoutFavoritesImpl(
     topStations: TopStations,
-    favoriteStationIds: FavoriteStationIds,
-    playingStationId: PlayingStationId,
+    favoriteStationNames: FavoriteStationNames,
+    playingStationName: PlayingStationName,
 ) : TopStationItemDataWithoutFavorites {
 
     private val combinedValue: ObsValue<List<StationItemData>> = combineObs(
-        topStations(), favoriteStationIds(), playingStationId()
-    ) { topStations, favoriteStationIds, playingStationId ->
+        topStations(), favoriteStationNames(), playingStationName()
+    ) { topStations, favoriteStationNames, playingStationName ->
         topStations.asSequence()
-            .filter { !favoriteStationIds.contains(it.id) }
-            .map { StationItemData(it, it.id == playingStationId) }
+            .filter { !favoriteStationNames.contains(it.name) }
+            .map { StationItemData(it, it.name == playingStationName) }
             .toList()
     }
 

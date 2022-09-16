@@ -1,10 +1,10 @@
 package xyz.skether.radiline.domain
 
-typealias StationId = Int
+typealias StationName = String
 
 interface Station {
-    val id: StationId
-    val name: String
+    val id: Int
+    val name: StationName
     val genre: String
     val currentTrack: String?
     val mediaType: String

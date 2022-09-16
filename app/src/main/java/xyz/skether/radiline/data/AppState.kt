@@ -1,18 +1,27 @@
 package xyz.skether.radiline.data
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import xyz.skether.radiline.data.backend.ShoutcastRetrofit
+import xyz.skether.radiline.data.db.AppDatabase
+import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
 
-typealias GetTopStations = suspend () -> List<Station>
-typealias GetFavoriteStations = suspend () -> List<Station>
+private const val TOP_LIMIT = 50
+private val TOP_UPDATE_INTERVAL = Time(6L * 60 * 60 * 1000) // 6 hours
 
 class AppState(
-    private val getTopStations: GetTopStations,
-    private val getFavoriteStations: GetFavoriteStations,
+    private val currentTime: CurrentTime,
+    private val preferences: Preferences,
+    private val shoutcastApi: ShoutcastRetrofit,
+    private val appDatabase: AppDatabase,
 ) {
-    private val scope = MainScope()
+    private val mainScope = MainScope()
+    private val compScope = CoroutineScope(Dispatchers.Default)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private val _player = MutableObsValue<Player>(Player.Disabled)
     val player: ObsValue<Player> get() = _player
@@ -23,28 +32,115 @@ class AppState(
     private val _favoriteStations = MutableObsValue<List<Station>>(emptyList())
     val favoriteStations: ObsValue<List<Station>> get() = _favoriteStations
 
-    private val _favoriteStationIds = MutableObsValue<Set<StationId>>(emptySet())
-    val favoriteStationIds: ObsValue<Set<StationId>> get() = _favoriteStationIds
-
     init {
-        scope.launch {
-            try {
-                _topStations.value = getTopStations()
-            } catch (e: Exception) {
-                Log.e("AppState", "Could not get top stations.", e)
+        ioScope.launch {
+            var fav = emptyList<Station>()
+            tryOrLog("getFavoritesFromDB") {
+                fav = appDatabase.stationDao().getFavorites()
+            }
+            _favoriteStations.updateValue(fav)
+
+            var top = emptyList<Station>()
+            tryOrLog("getTopFromDB") {
+                top = appDatabase.stationDao().getTop()
+            }
+            _topStations.updateValue(top)
+            val topUpdateTime = preferences.getLastTopUpdate() + TOP_UPDATE_INTERVAL
+            if (_topStations.value.isEmpty()
+                || currentTime().after(topUpdateTime)
+            ) {
+                updateTop()
             }
         }
     }
 
-    fun play(stationId: StationId) {
-        //
+    fun play(stationName: StationName) {
+        compScope.launch {
+            val station = findStation(stationName)
+            if (station != null) {
+                _player.updateValue(Player.Enabled(station, Player.Status.PLAYING))
+            }
+        }
     }
 
     fun playCurrent() {
-        //
+        compScope.launch {
+            val player = _player.value
+            if (player is Player.Enabled) {
+                _player.updateValue(Player.Enabled(player.station, Player.Status.PLAYING))
+            }
+        }
     }
 
     fun pause() {
-        //
+        compScope.launch {
+            val player = _player.value
+            if (player is Player.Enabled) {
+                _player.updateValue(Player.Enabled(player.station, Player.Status.PAUSED))
+            }
+        }
+    }
+
+
+    fun addToFavorites(stationName: StationName) {
+        ioScope.launch {
+            val fav = _favoriteStations.value
+            val inFav = fav.find { it.name == stationName }
+            if (inFav != null) {
+                return@launch
+            }
+            val inTop = _topStations.value.find { it.name == stationName } ?: return@launch
+            _favoriteStations.updateValue(fav + inTop)
+            tryOrLog("addToFavorites") {
+                setFavoritesDB(stationName, true)
+            }
+        }
+    }
+
+    fun removeFromFavorites(stationName: StationName) {
+        ioScope.launch {
+            val fav = _favoriteStations.value
+            _favoriteStations.updateValue(fav.filter { it.name != stationName })
+            tryOrLog("removeFromFavorites") {
+                setFavoritesDB(stationName, false)
+            }
+        }
+    }
+
+    private fun <T> MutableObsValue<T>.updateValue(newValue: T) {
+        mainScope.launch { value = newValue }
+    }
+
+    private suspend fun setFavoritesDB(stationName: StationName, inFavorites: Boolean) {
+        appDatabase.stationDao().setFavorites(stationName, inFavorites)
+    }
+
+    private suspend fun updateTop() = ioScope.launch {
+        val topXml = try {
+            shoutcastApi.getTopStations(limit = TOP_LIMIT)
+        } catch (e: Exception) {
+            Log.e("AppState", "updateTop", e)
+            if (_topStations.value.isEmpty()) {
+                // todo nothing to show error
+            }
+            return@launch
+        }
+        val stations = topXml.stations.distinctBy { it.name }
+        _topStations.updateValue(stations)
+        appDatabase.stationDao().updateTop(stations)
+        preferences.setLastTopUpdate(currentTime())
+    }
+
+    private fun findStation(stationName: StationName): Station? {
+        return _topStations.value.find { it.name == stationName }
+            ?: _favoriteStations.value.find { it.name == stationName }
+    }
+
+    private inline fun tryOrLog(message: String, fn: () -> Unit) {
+        try {
+            fn()
+        } catch (e: Exception) {
+            Log.e("AppState", message, e)
+        }
     }
 }
