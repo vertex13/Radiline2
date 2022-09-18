@@ -21,7 +21,7 @@ class MainScreenDataHolder(
     val favoriteStationItemData: FavoriteStationItemData,
     val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites,
     val play: Play,
-    val playerDataHolder: PlayerDataHolder,
+    val playerInfoDataHolder: PlayerInfoDataHolder,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +55,8 @@ fun MainScreen(dataHolder: MainScreenDataHolder) {
                 }
             }
 
-            Player(
-                dataHolder = dataHolder.playerDataHolder,
+            PlayerInfo(
+                dataHolder = dataHolder.playerInfoDataHolder,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 16.dp)

@@ -4,11 +4,11 @@ import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.ui.PlayingStationName
 
 class PlayingStationNameImpl(
-    getPlayer: GetPlayer,
+    getPlayerInfo: GetPlayerInfo,
 ) : PlayingStationName {
 
-    private val mappedValue: ObsValue<StationName?> = getPlayer().map {
-        if (it is Player.Enabled && it.status == Player.Status.PLAYING) {
+    private val mappedValue: ObsValue<StationName?> = getPlayerInfo().map {
+        if (it is PlayerInfo.Enabled && it.status == PlayerInfo.Status.PLAYING) {
             it.station.name
         } else {
             null

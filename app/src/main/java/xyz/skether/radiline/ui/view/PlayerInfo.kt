@@ -22,14 +22,14 @@ import xyz.skether.radiline.ui.asState
 import xyz.skether.radiline.ui.theme.FavoriteStarColor
 import xyz.skether.radiline.ui.theme.NotFavoriteStarColor
 
-data class PlayerData(
+data class PlayerInfoData(
     val stationName: StationName,
     val currentTrack: String?,
-    val playerStatus: Player.Status,
+    val playerStatus: PlayerInfo.Status,
     val inFavorites: Boolean,
 )
 
-class PlayerDataHolder(
+class PlayerInfoDataHolder(
     val getPlayerData: GetPlayerData,
     val playCurrent: PlayCurrent,
     val pause: Pause,
@@ -38,7 +38,7 @@ class PlayerDataHolder(
 )
 
 @Composable
-fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
+fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) {
     val data = dataHolder.getPlayerData().asState().value ?: return
     ElevatedCard(
         modifier = modifier
@@ -95,14 +95,14 @@ fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
 
             val controlsSize = 80.dp
             when (data.playerStatus) {
-                Player.Status.LOADING -> {
+                PlayerInfo.Status.LOADING -> {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(controlsSize)
                             .padding(8.dp)
                     )
                 }
-                Player.Status.PAUSED -> {
+                PlayerInfo.Status.PAUSED -> {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = stringResource(R.string.play),
@@ -111,7 +111,7 @@ fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
                             .clickable { dataHolder.playCurrent() }
                     )
                 }
-                Player.Status.PLAYING -> {
+                PlayerInfo.Status.PLAYING -> {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.pause),
@@ -128,5 +128,5 @@ fun Player(dataHolder: PlayerDataHolder, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun Preview() {
-    Player(previewPlayerDataHolder())
+    PlayerInfo(previewPlayerDataHolder())
 }

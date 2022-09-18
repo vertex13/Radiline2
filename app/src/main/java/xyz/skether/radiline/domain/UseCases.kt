@@ -1,6 +1,6 @@
 package xyz.skether.radiline.domain
 
-typealias GetPlayer = () -> ObsValue<Player>
+typealias GetPlayerInfo = () -> ObsValue<PlayerInfo>
 typealias FavoriteStations = () -> ObsValue<List<Station>>
 typealias TopStations = () -> ObsValue<List<Station>>
 typealias Play = (StationName) -> Unit

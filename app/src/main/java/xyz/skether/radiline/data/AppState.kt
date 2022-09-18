@@ -23,8 +23,8 @@ class AppState(
     private val compScope = CoroutineScope(Dispatchers.Default)
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    private val _player = MutableObsValue<Player>(Player.Disabled)
-    val player: ObsValue<Player> get() = _player
+    private val _playerInfo = MutableObsValue<PlayerInfo>(PlayerInfo.Disabled)
+    val playerInfo: ObsValue<PlayerInfo> get() = _playerInfo
 
     private val _topStations = MutableObsValue<List<Station>>(emptyList())
     val topStations: ObsValue<List<Station>> get() = _topStations
@@ -58,25 +58,25 @@ class AppState(
         compScope.launch {
             val station = findStation(stationName)
             if (station != null) {
-                _player.updateValue(Player.Enabled(station, Player.Status.PLAYING))
+                _playerInfo.updateValue(PlayerInfo.Enabled(station, PlayerInfo.Status.PLAYING))
             }
         }
     }
 
     fun playCurrent() {
         compScope.launch {
-            val player = _player.value
-            if (player is Player.Enabled) {
-                _player.updateValue(Player.Enabled(player.station, Player.Status.PLAYING))
+            val player = _playerInfo.value
+            if (player is PlayerInfo.Enabled) {
+                _playerInfo.updateValue(PlayerInfo.Enabled(player.station, PlayerInfo.Status.PLAYING))
             }
         }
     }
 
     fun pause() {
         compScope.launch {
-            val player = _player.value
-            if (player is Player.Enabled) {
-                _player.updateValue(Player.Enabled(player.station, Player.Status.PAUSED))
+            val player = _playerInfo.value
+            if (player is PlayerInfo.Enabled) {
+                _playerInfo.updateValue(PlayerInfo.Enabled(player.station, PlayerInfo.Status.PAUSED))
             }
         }
     }

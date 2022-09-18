@@ -14,7 +14,7 @@ import xyz.skether.radiline.system.SystemCurrentTime
 import xyz.skether.radiline.ui.*
 import xyz.skether.radiline.ui.transformer.*
 import xyz.skether.radiline.ui.view.MainScreenDataHolder
-import xyz.skether.radiline.ui.view.PlayerDataHolder
+import xyz.skether.radiline.ui.view.PlayerInfoDataHolder
 
 class Dependencies(
     private val appContext: AppContext,
@@ -24,11 +24,11 @@ class Dependencies(
             favoriteStationItemData = favoriteStationItemData,
             topStationItemDataWithoutFavorites = topStationItemDataWithoutFavorites,
             play = play,
-            playerDataHolder = playerDataHolder,
+            playerInfoDataHolder = playerInfoDataHolder,
         )
     }
-    private val playerDataHolder: PlayerDataHolder by lazy {
-        PlayerDataHolder(
+    private val playerInfoDataHolder: PlayerInfoDataHolder by lazy {
+        PlayerInfoDataHolder(
             getPlayerData = getPlayerData,
             playCurrent = playCurrent,
             pause = pause,
@@ -45,10 +45,10 @@ class Dependencies(
         )
     }
     private val playingStationName: PlayingStationName by lazy {
-        PlayingStationNameImpl(getPlayer)
+        PlayingStationNameImpl(getPlayerInfo)
     }
     private val getPlayerData: GetPlayerData by lazy {
-        GetPlayerDataImpl(getPlayer, favoriteStationNames)
+        GetPlayerDataImpl(getPlayerInfo, favoriteStationNames)
     }
     private val favoriteStationNames: FavoriteStationNames by lazy {
         FavoriteStationNamesImpl(favoriteStations)
@@ -63,8 +63,8 @@ class Dependencies(
             playingStationName
         )
     }
-    private val getPlayer: GetPlayer
-        get() = appState::player
+    private val getPlayerInfo: GetPlayerInfo
+        get() = appState::playerInfo
     private val favoriteStations: FavoriteStations
         get() = appState::favoriteStations
     private val topStations: TopStations
