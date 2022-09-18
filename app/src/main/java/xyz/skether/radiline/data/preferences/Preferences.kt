@@ -1,8 +1,12 @@
 package xyz.skether.radiline.data.preferences
 
 import xyz.skether.radiline.domain.Time
+import xyz.skether.radiline.domain.TuneInBase
 
 interface Preferences {
-    suspend fun getLastTopUpdate(): Time
-    suspend fun setLastTopUpdate(time: Time)
+    fun getLastTopUpdate(): Time
+    fun setLastTopUpdate(time: Time)
+
+    fun getTuneInBase(): TuneInBase
+    fun setTuneInBase(tuneInBase: TuneInBase)
 }

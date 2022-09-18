@@ -29,7 +29,9 @@ fun XmlPullParser.parseTopStationsXml(): TopStationsXml {
 fun XmlPullParser.parseTuneInXml(): TuneInXml {
     require(START_TAG, ns, "tunein")
     val tuneIn = TuneInXml(
-        base = getAttributeValue(ns, "base")
+        pls = getAttributeValue(ns, "base"),
+        m3u = getAttributeValue(ns, "base-m3u"),
+        xspf = getAttributeValue(ns, "base-xspf"),
     )
     nextTag()
     require(END_TAG, ns, "tunein")

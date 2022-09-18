@@ -125,6 +125,9 @@ class AppState(
             }
             return@launch
         }
+        topXml.tuneIn?.let {
+            preferences.setTuneInBase(it)
+        }
         val stations = topXml.stations.distinctBy { it.name }
         _topStations.updateValue(stations)
         appDatabase.stationDao().updateTop(stations)
