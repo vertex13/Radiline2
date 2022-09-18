@@ -6,7 +6,7 @@ import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.domain.StationName
 
 class PreviewStation(
-    override val id: Int = 729,
+    override val id: Long = 729L,
     override val name: StationName = "Station name $id",
     override val genre: String = "Genre name",
     override val currentTrack: String? = "Current track",
@@ -15,17 +15,17 @@ class PreviewStation(
     override val numberOfListeners: Int = 8439,
 ) : Station
 
-fun previewStationItemData(id: Int = 49384): StationItemData {
+fun previewStationItemData(id: Long = 49384L): StationItemData {
     return StationItemData(PreviewStation(id), false)
 }
 
-fun previewStationItemDataList(size: Int, fromId: Int = 1): List<StationItemData> {
+fun previewStationItemDataList(size: Int, fromId: Long = 1L): List<StationItemData> {
     return List(size) { previewStationItemData(it + fromId) }
 }
 
 fun previewPlayer(): Player {
     return Player.Enabled(
-        station = PreviewStation(2),
+        station = PreviewStation(2L),
         status = Player.Status.PLAYING,
     )
 }
@@ -42,10 +42,10 @@ fun previewPlayerData(): PlayerData {
 fun previewMainScreenDataHolder(): MainScreenDataHolder {
     return MainScreenDataHolder(
         favoriteStationItemData = {
-            MutableObsValue(previewStationItemDataList(5, fromId = 1))
+            MutableObsValue(previewStationItemDataList(5, fromId = 1L))
         },
         topStationItemDataWithoutFavorites = {
-            MutableObsValue(previewStationItemDataList(20, fromId = 10))
+            MutableObsValue(previewStationItemDataList(20, fromId = 10L))
         },
         play = {},
         playerDataHolder = previewPlayerDataHolder(),

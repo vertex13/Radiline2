@@ -41,7 +41,7 @@ fun XmlPullParser.parseTuneInXml(): TuneInXml {
 fun XmlPullParser.parseStationXml(): StationXml {
     require(START_TAG, ns, "station")
     val station = StationXml(
-        id = getAttributeValue(ns, "id").toInt(),
+        id = getAttributeValue(ns, "id").toLong(),
         name = getAttributeValue(ns, "name"),
         genre = getAttributeValue(ns, "genre"),
         currentTrack = getAttributeValue(ns, "ct"),

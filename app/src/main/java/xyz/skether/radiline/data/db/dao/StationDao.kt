@@ -55,7 +55,7 @@ abstract class StationDao {
     )
     protected abstract suspend fun updateAndSetTop(
         name: StationName,
-        id: Int,
+        id: Long,
         genre: String,
         currentTrack: String?,
         mediaType: String,
@@ -83,7 +83,7 @@ abstract class StationDao {
         """
     )
     protected abstract suspend fun insertOrIgnore(
-        id: Int,
+        id: Long,
         name: StationName,
         genre: String,
         currentTrack: String?,

@@ -9,7 +9,7 @@ import xyz.skether.radiline.domain.StationName
 @Entity(tableName = "station")
 class StationEntity(
     @PrimaryKey @ColumnInfo(name = "name") override val name: StationName,
-    @ColumnInfo(name = "id") override val id: Int,
+    @ColumnInfo(name = "id") override val id: Long,
     @ColumnInfo(name = "genre") override val genre: String,
     @ColumnInfo(name = "current_track") override val currentTrack: String?,
     @ColumnInfo(name = "media_type") override val mediaType: String,

@@ -6,7 +6,7 @@ class StationItemData(
     station: Station,
     val isPlaying: Boolean,
 ) {
-    val id: Int = station.id
+    val id: Long = station.id
     val name: String = station.name
     val genre: String = station.genre
     val bitrate: Int = station.bitrate
@@ -28,7 +28,7 @@ class StationItemData(
 
     override fun hashCode(): Int {
         var result = isPlaying.hashCode()
-        result = 31 * result + id
+        result = 31 * result + id.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + genre.hashCode()
         result = 31 * result + bitrate

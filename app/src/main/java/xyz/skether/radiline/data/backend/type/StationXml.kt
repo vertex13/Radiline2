@@ -4,7 +4,7 @@ import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.domain.StationName
 
 class StationXml(
-    override val id: Int,
+    override val id: Long,
     override val name: StationName,
     override val genre: String,
     override val currentTrack: String?,
