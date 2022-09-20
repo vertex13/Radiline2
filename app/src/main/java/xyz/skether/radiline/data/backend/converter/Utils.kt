@@ -27,3 +27,28 @@ fun XmlPullParser.skip() {
         }
     }
 }
+
+inline fun XmlPullParser.readTags(fn: (tag: String) -> Unit) {
+    while (next() != XmlPullParser.END_TAG) {
+        if (eventType != XmlPullParser.START_TAG) {
+            continue
+        }
+        fn(name)
+    }
+}
+
+fun XmlPullParser.readText(): String? {
+    var result: String? = null
+    if (next() == XmlPullParser.TEXT) {
+        result = text
+        nextTag()
+    }
+    return result
+}
+
+fun XmlPullParser.readTextFrom(tag: String, ns: String?): String? {
+    require(XmlPullParser.START_TAG, ns, tag)
+    val text = readText()
+    require(XmlPullParser.END_TAG, ns, tag)
+    return text
+}

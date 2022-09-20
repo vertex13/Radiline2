@@ -4,7 +4,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import xyz.skether.radiline.data.backend.converter.XmlConverterFactory
 
-private fun createRetrofit(baseUrl: String, apiKey: String): Retrofit {
+fun createShoutcastRetrofitApi(baseUrl: String, apiKey: String): ShoutcastRetrofitApi {
     val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val request = chain.request()
@@ -13,13 +13,18 @@ private fun createRetrofit(baseUrl: String, apiKey: String): Retrofit {
             chain.proceed(updatedRequest)
         }
         .build()
-    return Retrofit.Builder()
+    val retrofit = Retrofit.Builder()
         .client(client)
         .baseUrl(baseUrl)
         .addConverterFactory(XmlConverterFactory())
         .build()
+    return retrofit.create(ShoutcastRetrofitApi::class.java)
 }
 
-fun createShoutcastRetrofit(baseUrl: String, apiKey: String): ShoutcastRetrofit {
-    return createRetrofit(baseUrl, apiKey).create(ShoutcastRetrofit::class.java)
+fun createPlaylistRetrofitApi(baseUrl: String): PlaylistRetrofitApi {
+    val retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(XmlConverterFactory())
+        .build()
+    return retrofit.create(PlaylistRetrofitApi::class.java)
 }

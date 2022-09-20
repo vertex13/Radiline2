@@ -3,6 +3,7 @@ package xyz.skether.radiline.data.backend.converter
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParser.END_TAG
 import org.xmlpull.v1.XmlPullParser.START_TAG
+import xyz.skether.radiline.data.backend.type.PlaylistXspf
 import xyz.skether.radiline.data.backend.type.StationXml
 import xyz.skether.radiline.data.backend.type.TopStationsXml
 import xyz.skether.radiline.data.backend.type.TuneInXml
@@ -13,11 +14,8 @@ fun XmlPullParser.parseTopStationsXml(): TopStationsXml {
     require(START_TAG, ns, "stationlist")
     var tuneIn: TuneInXml? = null
     val stations = ArrayList<StationXml>()
-    while (next() != END_TAG) {
-        if (eventType != START_TAG) {
-            continue
-        }
-        when (name) {
+    readTags { tag ->
+        when (tag) {
             "tunein" -> tuneIn = parseTuneInXml()
             "station" -> stations.add(parseStationXml())
             else -> skip()
@@ -52,4 +50,52 @@ fun XmlPullParser.parseStationXml(): StationXml {
     nextTag()
     require(END_TAG, ns, "station")
     return station
+}
+
+fun XmlPullParser.parsePlaylistXspf(): PlaylistXspf {
+    require(START_TAG, ns, "playlist")
+    var title: String? = null
+    var trackList: List<PlaylistXspf.Track> = emptyList()
+    readTags { tag ->
+        when (tag) {
+            "title" -> title = readTextFrom("title", ns)
+            "trackList" -> trackList = parseTrackList()
+            else -> skip()
+        }
+    }
+    return PlaylistXspf(
+        title = title,
+        trackList = trackList,
+    )
+}
+
+fun XmlPullParser.parseTrackList(): List<PlaylistXspf.Track> {
+    require(START_TAG, ns, "trackList")
+    val trackList = ArrayList<PlaylistXspf.Track>()
+    readTags { tag ->
+        when (tag) {
+            "track" -> trackList.add(parseTrack())
+            else -> skip()
+        }
+    }
+    require(END_TAG, ns, "trackList")
+    return trackList
+}
+
+fun XmlPullParser.parseTrack(): PlaylistXspf.Track {
+    require(START_TAG, ns, "track")
+    var title: String? = null
+    var location: String? = null
+    readTags { tag ->
+        when (tag) {
+            "title" -> title = readTextFrom("title", ns)
+            "location" -> location = readTextFrom("location", ns)
+            else -> skip()
+        }
+    }
+    require(END_TAG, ns, "track")
+    return PlaylistXspf.Track(
+        title = title,
+        location = location,
+    )
 }

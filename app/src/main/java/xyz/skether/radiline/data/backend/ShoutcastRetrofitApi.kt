@@ -4,7 +4,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import xyz.skether.radiline.data.backend.type.TopStationsXml
 
-interface ShoutcastRetrofit {
+interface ShoutcastRetrofitApi {
     @GET("legacy/Top500")
     suspend fun getTopStations(
         @Query("limit") limit: Int? = null,

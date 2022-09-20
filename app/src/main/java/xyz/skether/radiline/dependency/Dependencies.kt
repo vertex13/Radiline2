@@ -2,9 +2,7 @@ package xyz.skether.radiline.dependency
 
 import xyz.skether.radiline.BuildConfig
 import xyz.skether.radiline.data.AppState
-import xyz.skether.radiline.data.backend.SHOUTCAST_BASE_URL
-import xyz.skether.radiline.data.backend.ShoutcastRetrofit
-import xyz.skether.radiline.data.backend.createShoutcastRetrofit
+import xyz.skether.radiline.data.backend.*
 import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.data.preferences.AppSharedPreferences
 import xyz.skether.radiline.data.preferences.Preferences
@@ -40,7 +38,8 @@ class Dependencies(
         AppState(
             currentTime = currentTime,
             preferences = preferences,
-            shoutcastApi = shoutcastRetrofit,
+            shoutcastApi = shoutcastRetrofitApi,
+            playlistApi = playlistRetrofitApi,
             appDatabase = appDatabase,
         )
     }
@@ -79,8 +78,11 @@ class Dependencies(
         get() = appState::addToFavorites
     private val removeFromFavorites: RemoveFromFavorites
         get() = appState::removeFromFavorites
-    private val shoutcastRetrofit: ShoutcastRetrofit by lazy {
-        createShoutcastRetrofit(SHOUTCAST_BASE_URL, BuildConfig.SHOUTCAST_API_KEY)
+    private val shoutcastRetrofitApi: ShoutcastRetrofitApi by lazy {
+        createShoutcastRetrofitApi(SHOUTCAST_BASE_URL, BuildConfig.SHOUTCAST_API_KEY)
+    }
+    private val playlistRetrofitApi: PlaylistRetrofitApi by lazy {
+        createPlaylistRetrofitApi(SHOUTCAST_PLAYLIST_URL)
     }
     private val appDatabase: AppDatabase by lazy {
         AppDatabase.create(appContext)

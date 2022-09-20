@@ -18,7 +18,7 @@ class TopStationsXmlParserTest {
     @Test
     fun test10StationsAndTuneIn() {
         val top = parse("top-10-stations-tunein.xml")
-        assertEquals("/sbin/tunein-station.pls", top.tuneIn?.base)
+        assertEquals("/sbin/tunein-station.pls", top.tuneIn?.pls)
         assertEquals(10, top.stations.size)
     }
 
@@ -39,7 +39,7 @@ class TopStationsXmlParserTest {
     @Test
     fun testOnlyTuneIn() {
         val top = parse("top-only-tunein.xml")
-        assertEquals("/sbin/tunein-station.pls", top.tuneIn?.base)
+        assertEquals("/sbin/tunein-station.pls", top.tuneIn?.pls)
         assertTrue(top.stations.isEmpty())
     }
 }
