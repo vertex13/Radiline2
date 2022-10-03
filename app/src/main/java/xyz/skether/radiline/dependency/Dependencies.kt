@@ -2,13 +2,15 @@ package xyz.skether.radiline.dependency
 
 import xyz.skether.radiline.BuildConfig
 import xyz.skether.radiline.data.AppState
+import xyz.skether.radiline.data.PauseUrl
+import xyz.skether.radiline.data.PlayUrl
+import xyz.skether.radiline.data.StopUrl
 import xyz.skether.radiline.data.backend.*
 import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.data.preferences.AppSharedPreferences
 import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
-import xyz.skether.radiline.system.AppContext
-import xyz.skether.radiline.system.SystemCurrentTime
+import xyz.skether.radiline.system.*
 import xyz.skether.radiline.ui.*
 import xyz.skether.radiline.ui.transformer.*
 import xyz.skether.radiline.ui.view.MainScreenDataHolder
@@ -41,6 +43,8 @@ class Dependencies(
             shoutcastApi = shoutcastRetrofitApi,
             playlistApi = playlistRetrofitApi,
             appDatabase = appDatabase,
+            playUrl = playUrl,
+            stopUrl = stopUrl,
         )
     }
     private val playingStationName: PlayingStationName by lazy {
@@ -92,5 +96,14 @@ class Dependencies(
     }
     private val currentTime: CurrentTime by lazy {
         SystemCurrentTime()
+    }
+    private val playUrl: PlayUrl by lazy {
+        playerServicePlayUrl(appContext)
+    }
+    private val pauseUrl: PauseUrl by lazy {
+        playerServicePauseUrl(appContext)
+    }
+    private val stopUrl: StopUrl by lazy {
+        playerServiceStopUrl(appContext)
     }
 }

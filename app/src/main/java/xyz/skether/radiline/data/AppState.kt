@@ -20,6 +20,8 @@ class AppState(
     private val shoutcastApi: ShoutcastRetrofitApi,
     private val playlistApi: PlaylistRetrofitApi,
     private val appDatabase: AppDatabase,
+    private val playUrl: PlayUrl,
+    private val stopUrl: StopUrl,
 ) {
     private val scope = MainScope()
 
@@ -82,7 +84,7 @@ class AppState(
                 playlistApi.getXspfPlaylist(baseXspf, station.id)
             }
             val url = playlist.trackList.firstOrNull()?.location ?: error("No track location.")
-            // todo player.play(url)
+            playUrl(url)
         } catch (e: Exception) {
             // todo add error
             Log.e("AppState", "Player exception.", e)
@@ -99,7 +101,7 @@ class AppState(
                 _playerInfo.updateValue(
                     PlayerInfo.Enabled(playerInfo.station, PlayerInfo.Status.PAUSED)
                 )
-                // todo player.stop()
+                stopUrl()
             }
         }
     }
