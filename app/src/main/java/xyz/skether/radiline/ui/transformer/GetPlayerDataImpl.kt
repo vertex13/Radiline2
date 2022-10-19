@@ -1,12 +1,10 @@
 package xyz.skether.radiline.ui.transformer
 
-import xyz.skether.radiline.domain.GetPlayerInfo
-import xyz.skether.radiline.domain.ObsValue
-import xyz.skether.radiline.domain.PlayerInfo
-import xyz.skether.radiline.domain.combineObs
+import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.ui.FavoriteStationNames
 import xyz.skether.radiline.ui.GetPlayerData
 import xyz.skether.radiline.ui.view.PlayerInfoData
+import xyz.skether.radiline.ui.view.PlayerStatus
 
 class GetPlayerDataImpl(
     getPlayerInfo: GetPlayerInfo,
@@ -15,16 +13,21 @@ class GetPlayerDataImpl(
 
     private val mappedValue: ObsValue<PlayerInfoData?> = combineObs(
         getPlayerInfo(), favoriteStationNames()
-    ) { player, favoriteStationNames ->
-        if (player is PlayerInfo.Enabled) {
+    ) { playerInfo, favoriteStationNames ->
+        val createInfoData = { station: Station, status: PlayerStatus ->
             PlayerInfoData(
-                stationName = player.station.name,
-                currentTrack = player.station.currentTrack,
-                playerStatus = player.status,
-                inFavorites = favoriteStationNames.contains(player.station.name)
+                stationName = station.name,
+                currentTrack = station.currentTrack,
+                playerStatus = status,
+                inFavorites = favoriteStationNames.contains(station.name)
             )
-        } else {
-            null
+        }
+        when (playerInfo) {
+            PlayerInfo.Disabled -> null
+            is PlayerInfo.Loading -> createInfoData(playerInfo.station, PlayerStatus.LOADING)
+            is PlayerInfo.Playing -> createInfoData(playerInfo.station, PlayerStatus.PLAYING)
+            is PlayerInfo.Paused -> createInfoData(playerInfo.station, PlayerStatus.PAUSED)
+            is PlayerInfo.Stopped -> createInfoData(playerInfo.station, PlayerStatus.PAUSED)
         }
     }
 

@@ -2,14 +2,12 @@ package xyz.skether.radiline.dependency
 
 import xyz.skether.radiline.BuildConfig
 import xyz.skether.radiline.data.AppState
-import xyz.skether.radiline.data.PauseUrl
-import xyz.skether.radiline.data.PlayUrl
-import xyz.skether.radiline.data.StopUrl
 import xyz.skether.radiline.data.backend.*
 import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.data.preferences.AppSharedPreferences
 import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
+import xyz.skether.radiline.player.UrlAudioPlayer
 import xyz.skether.radiline.system.*
 import xyz.skether.radiline.ui.*
 import xyz.skether.radiline.ui.transformer.*
@@ -19,23 +17,27 @@ import xyz.skether.radiline.ui.view.PlayerInfoDataHolder
 class Dependencies(
     private val appContext: AppContext,
 ) {
-    val mainScreenDataHolder: MainScreenDataHolder by lazy {
-        MainScreenDataHolder(
+    val mainScreenDataHolder: MainScreenDataHolder
+        get() = MainScreenDataHolder(
             favoriteStationItemData = favoriteStationItemData,
             topStationItemDataWithoutFavorites = topStationItemDataWithoutFavorites,
             play = play,
             playerInfoDataHolder = playerInfoDataHolder,
         )
-    }
-    private val playerInfoDataHolder: PlayerInfoDataHolder by lazy {
-        PlayerInfoDataHolder(
+    val playerServiceDataHolder: PlayerServiceDataHolder
+        get() = PlayerServiceDataHolder(appContext, getPlayerInfo(), stop)
+    val playerBroadcastReceiverDataHolder: PlayerBroadcastReceiverDataHolder
+        get() = PlayerBroadcastReceiverDataHolder(playCurrent, pause, stop)
+    val urlAudioPlayer: UrlAudioPlayer
+        get() = UrlAudioPlayer(appContext.value)
+    private val playerInfoDataHolder: PlayerInfoDataHolder
+        get() = PlayerInfoDataHolder(
             getPlayerData = getPlayerData,
             playCurrent = playCurrent,
-            pause = pause,
+            stop = stop,
             addToFavorites = addToFavorites,
             removeFromFavorites = removeFromFavorites,
         )
-    }
     private val appState: AppState by lazy {
         AppState(
             currentTime = currentTime,
@@ -43,8 +45,7 @@ class Dependencies(
             shoutcastApi = shoutcastRetrofitApi,
             playlistApi = playlistRetrofitApi,
             appDatabase = appDatabase,
-            playUrl = playUrl,
-            stopUrl = stopUrl,
+            runPlayer = runPlayer,
         )
     }
     private val playingStationName: PlayingStationName by lazy {
@@ -78,6 +79,8 @@ class Dependencies(
         get() = appState::playCurrent
     private val pause: Pause
         get() = appState::pause
+    private val stop: Stop
+        get() = appState::stop
     private val addToFavorites: AddToFavorites
         get() = appState::addToFavorites
     private val removeFromFavorites: RemoveFromFavorites
@@ -97,13 +100,7 @@ class Dependencies(
     private val currentTime: CurrentTime by lazy {
         SystemCurrentTime()
     }
-    private val playUrl: PlayUrl by lazy {
-        playerServicePlayUrl(appContext)
-    }
-    private val pauseUrl: PauseUrl by lazy {
-        playerServicePauseUrl(appContext)
-    }
-    private val stopUrl: StopUrl by lazy {
-        playerServiceStopUrl(appContext)
+    private val runPlayer: RunPlayer by lazy {
+        runPlayerService(appContext)
     }
 }

@@ -8,7 +8,7 @@ class PlayingStationNameImpl(
 ) : PlayingStationName {
 
     private val mappedValue: ObsValue<StationName?> = getPlayerInfo().map {
-        if (it is PlayerInfo.Enabled && it.status == PlayerInfo.Status.PLAYING) {
+        if (it is PlayerInfo.Playing) {
             it.station.name
         } else {
             null

@@ -24,9 +24,9 @@ fun previewStationItemDataList(size: Int, fromId: Long = 1L): List<StationItemDa
 }
 
 fun previewPlayer(): PlayerInfo {
-    return PlayerInfo.Enabled(
+    return PlayerInfo.Playing(
         station = PreviewStation(2L),
-        status = PlayerInfo.Status.PLAYING,
+        trackUrl = "http://track.url"
     )
 }
 
@@ -34,7 +34,7 @@ fun previewPlayerData(): PlayerInfoData {
     return PlayerInfoData(
         stationName = "Station name",
         currentTrack = "Current track",
-        playerStatus = PlayerInfo.Status.PLAYING,
+        playerStatus = PlayerStatus.PLAYING,
         inFavorites = true,
     )
 }
@@ -56,7 +56,7 @@ fun previewPlayerDataHolder(): PlayerInfoDataHolder {
     return PlayerInfoDataHolder(
         getPlayerData = { MutableObsValue(previewPlayerData()) },
         playCurrent = {},
-        pause = {},
+        stop = {},
         addToFavorites = {},
         removeFromFavorites = {},
     )

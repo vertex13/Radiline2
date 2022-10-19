@@ -1,6 +1,9 @@
 package xyz.skether.radiline
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import xyz.skether.radiline.dependency.Dependencies
 import xyz.skether.radiline.system.AppContext
 
@@ -11,6 +14,20 @@ class RadilineApp : Application() {
     override fun onCreate() {
         super.onCreate()
         dependencies = Dependencies(AppContext.from(this))
+        createNotificationChannels()
+    }
+
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val mChannel = NotificationChannel(
+                PLAYER_NOTIF_CHANNEL_ID,
+                getString(R.string.player_notif_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            mChannel.description = getString(R.string.player_notif_channel_description)
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(mChannel)
+        }
     }
 }
 

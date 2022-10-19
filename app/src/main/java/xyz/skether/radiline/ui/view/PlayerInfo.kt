@@ -25,14 +25,16 @@ import xyz.skether.radiline.ui.theme.NotFavoriteStarColor
 data class PlayerInfoData(
     val stationName: StationName,
     val currentTrack: String?,
-    val playerStatus: PlayerInfo.Status,
+    val playerStatus: PlayerStatus,
     val inFavorites: Boolean,
 )
+
+enum class PlayerStatus { LOADING, PLAYING, PAUSED }
 
 class PlayerInfoDataHolder(
     val getPlayerData: GetPlayerData,
     val playCurrent: PlayCurrent,
-    val pause: Pause,
+    val stop: Stop,
     val addToFavorites: AddToFavorites,
     val removeFromFavorites: RemoveFromFavorites,
 )
@@ -95,14 +97,14 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
 
             val controlsSize = 80.dp
             when (data.playerStatus) {
-                PlayerInfo.Status.LOADING -> {
+                PlayerStatus.LOADING -> {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(controlsSize)
                             .padding(8.dp)
                     )
                 }
-                PlayerInfo.Status.PAUSED -> {
+                PlayerStatus.PAUSED -> {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = stringResource(R.string.play),
@@ -111,13 +113,13 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
                             .clickable { dataHolder.playCurrent() }
                     )
                 }
-                PlayerInfo.Status.PLAYING -> {
+                PlayerStatus.PLAYING -> {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.pause),
                         modifier = Modifier
                             .size(controlsSize)
-                            .clickable { dataHolder.pause() }
+                            .clickable { dataHolder.stop() }
                     )
                 }
             }

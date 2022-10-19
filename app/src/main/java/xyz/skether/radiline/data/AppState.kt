@@ -20,8 +20,7 @@ class AppState(
     private val shoutcastApi: ShoutcastRetrofitApi,
     private val playlistApi: PlaylistRetrofitApi,
     private val appDatabase: AppDatabase,
-    private val playUrl: PlayUrl,
-    private val stopUrl: StopUrl,
+    private val runPlayer: RunPlayer,
 ) {
     private val scope = MainScope()
 
@@ -61,51 +60,66 @@ class AppState(
             val station = findStation(stationName)
             if (station == null) {
                 _playerInfo.updateValue(PlayerInfo.Disabled)
-            } else {
-                play(station)
+                return@launch
+            }
+
+            _playerInfo.updateValue(PlayerInfo.Loading(station))
+            try {
+                val baseXspf = preferences.getTuneInBase().xspf
+                    ?: error("No base xspf.")
+                val playlist = withContext(Dispatchers.IO) {
+                    playlistApi.getXspfPlaylist(baseXspf, station.id)
+                }
+                val trackUrl = playlist.trackList.firstOrNull()?.location
+                    ?: error("No track location.")
+                _playerInfo.updateValue(PlayerInfo.Playing(station, trackUrl))
+                runPlayer()
+            } catch (e: Exception) {
+                // todo add error
+                Log.e("AppState", "Player exception.", e)
+                _playerInfo.updateValue(PlayerInfo.Disabled)
             }
         }
     }
 
     fun playCurrent() {
         scope.launch(Dispatchers.Default) {
-            val playerInfo = _playerInfo.value
-            if (playerInfo is PlayerInfo.Enabled) {
-                play(playerInfo.station)
+            val info = _playerInfo.value
+            if (info is PlayerInfo.Paused) {
+                _playerInfo.updateValue(PlayerInfo.Playing(info.station, info.trackUrl))
+                runPlayer()
+            } else if (info is PlayerInfo.Stopped) {
+                _playerInfo.updateValue(PlayerInfo.Playing(info.station, info.trackUrl))
+                runPlayer()
             }
         }
-    }
-
-    private suspend fun play(station: Station) {
-        _playerInfo.updateValue(PlayerInfo.Enabled(station, PlayerInfo.Status.LOADING))
-        try {
-            val baseXspf = preferences.getTuneInBase().xspf ?: error("No base xspf.")
-            val playlist = withContext(Dispatchers.IO) {
-                playlistApi.getXspfPlaylist(baseXspf, station.id)
-            }
-            val url = playlist.trackList.firstOrNull()?.location ?: error("No track location.")
-            playUrl(url)
-        } catch (e: Exception) {
-            // todo add error
-            Log.e("AppState", "Player exception.", e)
-            _playerInfo.updateValue(PlayerInfo.Disabled)
-            return
-        }
-        _playerInfo.updateValue(PlayerInfo.Enabled(station, PlayerInfo.Status.PLAYING))
     }
 
     fun pause() {
         scope.launch(Dispatchers.Default) {
-            val playerInfo = _playerInfo.value
-            if (playerInfo is PlayerInfo.Enabled) {
+            val info = _playerInfo.value
+            if (info is PlayerInfo.Playing) {
                 _playerInfo.updateValue(
-                    PlayerInfo.Enabled(playerInfo.station, PlayerInfo.Status.PAUSED)
+                    PlayerInfo.Paused(info.station, info.trackUrl)
                 )
-                stopUrl()
             }
         }
     }
 
+    fun stop() {
+        scope.launch(Dispatchers.Default) {
+            val info = _playerInfo.value
+            if (info is PlayerInfo.Playing) {
+                _playerInfo.updateValue(
+                    PlayerInfo.Stopped(info.station, info.trackUrl)
+                )
+            } else if (info is PlayerInfo.Paused) {
+                _playerInfo.updateValue(
+                    PlayerInfo.Stopped(info.station, info.trackUrl)
+                )
+            }
+        }
+    }
 
     fun addToFavorites(stationName: StationName) {
         scope.launch(Dispatchers.IO) {
