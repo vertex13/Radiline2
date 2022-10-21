@@ -12,13 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.Play
-import xyz.skether.radiline.ui.FavoriteStationItemData
+import xyz.skether.radiline.ui.FavoriteStationsItemData
 import xyz.skether.radiline.ui.TopStationItemDataWithoutFavorites
 import xyz.skether.radiline.ui.asState
 import xyz.skether.radiline.ui.theme.FavoriteStationColor
 
 class MainScreenDataHolder(
-    val favoriteStationItemData: FavoriteStationItemData,
+    val favoriteStationsItemData: FavoriteStationsItemData,
     val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites,
     val play: Play,
     val playerInfoDataHolder: PlayerInfoDataHolder,
@@ -30,8 +30,8 @@ fun MainScreen(dataHolder: MainScreenDataHolder) {
     Scaffold { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             val favCardColors = CardDefaults.cardColors(containerColor = FavoriteStationColor)
-            val favorites by dataHolder.favoriteStationItemData().asState()
-            val top by dataHolder.topStationItemDataWithoutFavorites().asState()
+            val favorites by dataHolder.favoriteStationsItemData.asState()
+            val top by dataHolder.topStationItemDataWithoutFavorites.asState()
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 150.dp),

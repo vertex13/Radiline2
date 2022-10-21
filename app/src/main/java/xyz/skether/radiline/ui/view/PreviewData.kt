@@ -1,7 +1,6 @@
 package xyz.skether.radiline.ui.view
 
 import xyz.skether.radiline.domain.MutableObsValue
-import xyz.skether.radiline.domain.PlayerInfo
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.domain.StationName
 
@@ -23,13 +22,6 @@ fun previewStationItemDataList(size: Int, fromId: Long = 1L): List<StationItemDa
     return List(size) { previewStationItemData(it + fromId) }
 }
 
-fun previewPlayer(): PlayerInfo {
-    return PlayerInfo.Playing(
-        station = PreviewStation(2L),
-        trackUrl = "http://track.url"
-    )
-}
-
 fun previewPlayerData(): PlayerInfoData {
     return PlayerInfoData(
         stationName = "Station name",
@@ -41,12 +33,10 @@ fun previewPlayerData(): PlayerInfoData {
 
 fun previewMainScreenDataHolder(): MainScreenDataHolder {
     return MainScreenDataHolder(
-        favoriteStationItemData = {
-            MutableObsValue(previewStationItemDataList(5, fromId = 1L))
-        },
-        topStationItemDataWithoutFavorites = {
-            MutableObsValue(previewStationItemDataList(20, fromId = 10L))
-        },
+        favoriteStationsItemData = MutableObsValue(previewStationItemDataList(5, fromId = 1L)),
+        topStationItemDataWithoutFavorites = MutableObsValue(
+            previewStationItemDataList(20, fromId = 10L)
+        ),
         play = {},
         playerInfoDataHolder = previewPlayerDataHolder(),
     )
@@ -54,7 +44,7 @@ fun previewMainScreenDataHolder(): MainScreenDataHolder {
 
 fun previewPlayerDataHolder(): PlayerInfoDataHolder {
     return PlayerInfoDataHolder(
-        getPlayerData = { MutableObsValue(previewPlayerData()) },
+        playerInfoDataValue = MutableObsValue(previewPlayerData()),
         playCurrent = {},
         stop = {},
         addToFavorites = {},

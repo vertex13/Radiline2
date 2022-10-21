@@ -30,7 +30,7 @@ fun runPlayerService(appContext: AppContext): RunPlayer = {
 
 class PlayerServiceDataHolder(
     val appContext: AppContext,
-    val playerInfo: ObsValue<PlayerInfo>,
+    val playerInfo: PlayerInfoValue,
     val stop: Stop,
 )
 

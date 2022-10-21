@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.*
-import xyz.skether.radiline.ui.GetPlayerData
+import xyz.skether.radiline.ui.PlayerInfoDataValue
 import xyz.skether.radiline.ui.asState
 import xyz.skether.radiline.ui.theme.FavoriteStarColor
 import xyz.skether.radiline.ui.theme.NotFavoriteStarColor
@@ -32,7 +32,7 @@ data class PlayerInfoData(
 enum class PlayerStatus { LOADING, PLAYING, PAUSED }
 
 class PlayerInfoDataHolder(
-    val getPlayerData: GetPlayerData,
+    val playerInfoDataValue: PlayerInfoDataValue,
     val playCurrent: PlayCurrent,
     val stop: Stop,
     val addToFavorites: AddToFavorites,
@@ -41,7 +41,7 @@ class PlayerInfoDataHolder(
 
 @Composable
 fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) {
-    val data = dataHolder.getPlayerData().asState().value ?: return
+    val data = dataHolder.playerInfoDataValue.asState().value ?: return
     ElevatedCard(
         modifier = modifier
     ) {

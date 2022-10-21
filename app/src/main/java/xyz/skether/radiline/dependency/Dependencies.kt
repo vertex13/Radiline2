@@ -18,20 +18,20 @@ class Dependencies(
 ) {
     val mainScreenDataHolder: MainScreenDataHolder
         get() = MainScreenDataHolder(
-            favoriteStationItemData = favoriteStationItemData,
+            favoriteStationsItemData = favoriteStationsItemData,
             topStationItemDataWithoutFavorites = topStationItemDataWithoutFavorites,
             play = play,
             playerInfoDataHolder = playerInfoDataHolder,
         )
     val playerServiceDataHolder: PlayerServiceDataHolder
-        get() = PlayerServiceDataHolder(appContext, getPlayerInfo(), stop)
+        get() = PlayerServiceDataHolder(appContext, playerInfoValue, stop)
     val playerBroadcastReceiverDataHolder: PlayerBroadcastReceiverDataHolder
         get() = PlayerBroadcastReceiverDataHolder(playCurrent, pause, stop)
     val urlAudioPlayer: UrlAudioPlayer
         get() = UrlAudioPlayer(appContext)
     private val playerInfoDataHolder: PlayerInfoDataHolder
         get() = PlayerInfoDataHolder(
-            getPlayerData = getPlayerData,
+            playerInfoDataValue = playerInfoDataValue,
             playCurrent = playCurrent,
             stop = stop,
             addToFavorites = addToFavorites,
@@ -48,30 +48,28 @@ class Dependencies(
         )
     }
     private val playingStationName: PlayingStationName by lazy {
-        PlayingStationNameImpl(getPlayerInfo)
+        transformPlayingStationName(playerInfoValue)
     }
-    private val getPlayerData: GetPlayerData by lazy {
-        GetPlayerDataImpl(getPlayerInfo, favoriteStationNames)
+    private val playerInfoDataValue: PlayerInfoDataValue by lazy {
+        transformPlayerInfoData(playerInfoValue, favoriteStationsNames)
     }
-    private val favoriteStationNames: FavoriteStationNames by lazy {
-        FavoriteStationNamesImpl(favoriteStations)
+    private val favoriteStationsNames: FavoriteStationsNames by lazy {
+        transformFavoriteStationNames(favoriteStations)
     }
-    private val favoriteStationItemData: FavoriteStationItemData by lazy {
-        FavoriteStationItemDataImpl(favoriteStations, playingStationName)
+    private val favoriteStationsItemData: FavoriteStationsItemData by lazy {
+        transformFavoriteStationsItemData(favoriteStations, playingStationName)
     }
     private val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites by lazy {
-        TopStationItemDataWithoutFavoritesImpl(
-            topStations,
-            favoriteStationNames,
-            playingStationName
+        transformTopStationsItemDataWithoutFavorites(
+            topStations, favoriteStationsNames, playingStationName
         )
     }
-    private val getPlayerInfo: GetPlayerInfo
-        get() = appState::playerInfo
+    private val playerInfoValue: PlayerInfoValue
+        get() = appState.playerInfo
     private val favoriteStations: FavoriteStations
-        get() = appState::favoriteStations
+        get() = appState.favoriteStations
     private val topStations: TopStations
-        get() = appState::topStations
+        get() = appState.topStations
     private val play: Play
         get() = appState::play
     private val playCurrent: PlayCurrent
