@@ -1,4 +1,4 @@
-package xyz.skether.radiline.player
+package xyz.skether.radiline.system
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -6,7 +6,7 @@ import android.media.MediaPlayer
 import android.net.wifi.WifiManager
 import android.os.PowerManager
 
-class UrlAudioPlayer(private val context: Context) {
+class UrlAudioPlayer(private val appContext: AppContext) {
     private var mp: MediaPlayer? = null
     private var wifiLock: WifiManager.WifiLock? = null
 
@@ -32,7 +32,7 @@ class UrlAudioPlayer(private val context: Context) {
             .build()
         return MediaPlayer().apply {
             setAudioAttributes(attrs)
-            setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
+            setWakeMode(appContext.value, PowerManager.PARTIAL_WAKE_LOCK)
         }
     }
 
@@ -42,11 +42,9 @@ class UrlAudioPlayer(private val context: Context) {
     }
 
     private fun acquireWifiLock() {
-        val wifiManager =
-            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiManager = appContext.value.getSystemService(Context.WIFI_SERVICE) as WifiManager
         wifiLock = wifiManager.createWifiLock(
-            WifiManager.WIFI_MODE_FULL_HIGH_PERF,
-            "UrlAudioPlayer_WifiLock"
+            WifiManager.WIFI_MODE_FULL_HIGH_PERF, "UrlAudioPlayer_WifiLock"
         )
         wifiLock?.acquire()
     }

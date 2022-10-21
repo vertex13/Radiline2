@@ -7,7 +7,6 @@ import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.data.preferences.AppSharedPreferences
 import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
-import xyz.skether.radiline.player.UrlAudioPlayer
 import xyz.skether.radiline.system.*
 import xyz.skether.radiline.ui.*
 import xyz.skether.radiline.ui.transformer.*
@@ -29,7 +28,7 @@ class Dependencies(
     val playerBroadcastReceiverDataHolder: PlayerBroadcastReceiverDataHolder
         get() = PlayerBroadcastReceiverDataHolder(playCurrent, pause, stop)
     val urlAudioPlayer: UrlAudioPlayer
-        get() = UrlAudioPlayer(appContext.value)
+        get() = UrlAudioPlayer(appContext)
     private val playerInfoDataHolder: PlayerInfoDataHolder
         get() = PlayerInfoDataHolder(
             getPlayerData = getPlayerData,

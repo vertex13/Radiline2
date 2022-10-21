@@ -19,7 +19,6 @@ import xyz.skether.radiline.PLAYER_NOTIF_CHANNEL_ID
 import xyz.skether.radiline.R
 import xyz.skether.radiline.app
 import xyz.skether.radiline.domain.*
-import xyz.skether.radiline.player.UrlAudioPlayer
 
 private const val NOTIFICATION_ID = 854939
 
