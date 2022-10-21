@@ -1,7 +1,7 @@
 package xyz.skether.radiline.data
 
-import android.util.Log
 import kotlinx.coroutines.*
+import xyz.skether.logger.logE
 import xyz.skether.radiline.data.backend.PlaylistRetrofitApi
 import xyz.skether.radiline.data.backend.ShoutcastRetrofitApi
 import xyz.skether.radiline.data.db.AppDatabase
@@ -82,8 +82,7 @@ class AppState(
                 _playerInfo.updateValue(PlayerInfo.Playing(station, trackUrl))
                 runPlayer()
             } catch (e: Exception) {
-                // todo add error
-                Log.e("AppState", "Player exception.", e)
+                logE("Could not load the track list.", e)
                 _playerInfo.updateValue(PlayerInfo.Disabled)
             }
         }
@@ -165,7 +164,7 @@ class AppState(
         val topXml = try {
             shoutcastApi.getTopStations(limit = TOP_LIMIT, mediaType = SUPPORTED_MEDIA_TYPE)
         } catch (e: Exception) {
-            Log.e("AppState", "updateTop", e)
+            logE("Could not get top stations.", e)
             if (_topStations.value.isEmpty()) {
                 // todo nothing to show error
             }
@@ -194,7 +193,7 @@ class AppState(
                 mediaType = station.mediaType,
             ).stations.firstOrNull()
         } catch (e: Exception) {
-            Log.e("AppState", "Could not find the station.", e)
+            logE("Could not find the station.", e)
             null
         }
     }
@@ -231,7 +230,7 @@ class AppState(
         try {
             fn()
         } catch (e: Exception) {
-            Log.e("AppState", message, e)
+            logE(message, e)
         }
     }
 

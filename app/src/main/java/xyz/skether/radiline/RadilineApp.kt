@@ -4,6 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import xyz.skether.logger.EmptyLogger
+import xyz.skether.logger.LogcatLogger
+import xyz.skether.logger.initLogger
 import xyz.skether.radiline.dependency.Dependencies
 import xyz.skether.radiline.system.AppContext
 
@@ -13,8 +16,18 @@ class RadilineApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        setupLogger()
         dependencies = Dependencies(AppContext.from(this))
         createNotificationChannels()
+    }
+
+    private fun setupLogger() {
+        val logger = if (BuildConfig.DEBUG) {
+            LogcatLogger()
+        } else {
+            EmptyLogger()
+        }
+        initLogger(logger)
     }
 
     private fun createNotificationChannels() {

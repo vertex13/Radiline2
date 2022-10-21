@@ -6,7 +6,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +13,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
+import xyz.skether.logger.logE
 import xyz.skether.radiline.MainActivity
 import xyz.skether.radiline.PLAYER_NOTIF_CHANNEL_ID
 import xyz.skether.radiline.R
@@ -124,8 +124,7 @@ class PlayerService : Service() {
                             try {
                                 player.play(playingUrl)
                             } catch (e: Exception) {
-                                // todo log error
-                                Log.e("PlayerService", "Play error.", e)
+                                logE("Play error.", e)
                                 dataHolder.stop()
                             }
                         }

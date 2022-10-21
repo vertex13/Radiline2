@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "radiline"
 include ':app'
 include ':player'
+include ':logger'
