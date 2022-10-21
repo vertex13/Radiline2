@@ -1,18 +1,17 @@
 package xyz.skether.radiline.data
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import xyz.skether.radiline.data.backend.PlaylistRetrofitApi
 import xyz.skether.radiline.data.backend.ShoutcastRetrofitApi
 import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.data.preferences.Preferences
 import xyz.skether.radiline.domain.*
 
+private const val SUPPORTED_MEDIA_TYPE = "audio/mpeg"
 private const val TOP_LIMIT = 50
-private val TOP_UPDATE_INTERVAL = Time(6L * 60 * 60 * 1000) // 6 hours
+private val CURRENT_STATION_UPDATE_INTERVAL = Time(20L * 1000L) // 20 seconds
+private val TOP_UPDATE_INTERVAL = Time(6L * 60L * 60L * 1000L) // 6 hours
 
 class AppState(
     private val currentTime: CurrentTime,
@@ -22,7 +21,7 @@ class AppState(
     private val appDatabase: AppDatabase,
     private val runPlayer: RunPlayer,
 ) {
-    private val scope = MainScope()
+    private val mainScope = MainScope()
 
     private val _playerInfo = MutableObsValue<PlayerInfo>(PlayerInfo.Disabled)
     val playerInfo: ObsValue<PlayerInfo> get() = _playerInfo
@@ -34,7 +33,7 @@ class AppState(
     val favoriteStations: ObsValue<List<Station>> get() = _favoriteStations
 
     init {
-        scope.launch(Dispatchers.IO) {
+        mainScope.launch(Dispatchers.IO) {
             var fav = emptyList<Station>()
             tryOrLog("getFavoritesFromDB") {
                 fav = appDatabase.stationDao().getFavorites()
@@ -52,18 +51,26 @@ class AppState(
             ) {
                 updateTop()
             }
+
+            runCurrentStationAutoUpdater()
         }
     }
 
     fun play(stationName: StationName) {
-        scope.launch(Dispatchers.Default) {
-            val station = findStation(stationName)
+        mainScope.launch(Dispatchers.Default) {
+            var station: Station? = findStationInCache(stationName)
             if (station == null) {
                 _playerInfo.updateValue(PlayerInfo.Disabled)
                 return@launch
             }
 
             _playerInfo.updateValue(PlayerInfo.Loading(station))
+            val updatedStation = findStationAtBackend(station)
+            if (updatedStation != null) {
+                station = updatedStation
+                updateStation(station)
+            }
+
             try {
                 val baseXspf = preferences.getTuneInBase().xspf
                     ?: error("No base xspf.")
@@ -83,7 +90,7 @@ class AppState(
     }
 
     fun playCurrent() {
-        scope.launch(Dispatchers.Default) {
+        mainScope.launch(Dispatchers.Default) {
             val info = _playerInfo.value
             if (info is PlayerInfo.Paused) {
                 _playerInfo.updateValue(PlayerInfo.Playing(info.station, info.trackUrl))
@@ -96,7 +103,7 @@ class AppState(
     }
 
     fun pause() {
-        scope.launch(Dispatchers.Default) {
+        mainScope.launch(Dispatchers.Default) {
             val info = _playerInfo.value
             if (info is PlayerInfo.Playing) {
                 _playerInfo.updateValue(
@@ -107,7 +114,7 @@ class AppState(
     }
 
     fun stop() {
-        scope.launch(Dispatchers.Default) {
+        mainScope.launch(Dispatchers.Default) {
             val info = _playerInfo.value
             if (info is PlayerInfo.Playing) {
                 _playerInfo.updateValue(
@@ -122,7 +129,7 @@ class AppState(
     }
 
     fun addToFavorites(stationName: StationName) {
-        scope.launch(Dispatchers.IO) {
+        mainScope.launch(Dispatchers.IO) {
             val fav = _favoriteStations.value
             val inFav = fav.find { it.name == stationName }
             if (inFav != null) {
@@ -137,7 +144,7 @@ class AppState(
     }
 
     fun removeFromFavorites(stationName: StationName) {
-        scope.launch(Dispatchers.IO) {
+        mainScope.launch(Dispatchers.IO) {
             val fav = _favoriteStations.value
             _favoriteStations.updateValue(fav.filter { it.name != stationName })
             tryOrLog("removeFromFavorites") {
@@ -147,16 +154,16 @@ class AppState(
     }
 
     private fun <T> MutableObsValue<T>.updateValue(newValue: T) {
-        scope.launch { value = newValue }
+        mainScope.launch { value = newValue }
     }
 
     private suspend fun setFavoritesDB(stationName: StationName, inFavorites: Boolean) {
         appDatabase.stationDao().setFavorites(stationName, inFavorites)
     }
 
-    private suspend fun updateTop() = scope.launch(Dispatchers.IO) {
+    private suspend fun updateTop() = mainScope.launch(Dispatchers.IO) {
         val topXml = try {
-            shoutcastApi.getTopStations(limit = TOP_LIMIT, mediaType = "audio/mpeg")
+            shoutcastApi.getTopStations(limit = TOP_LIMIT, mediaType = SUPPORTED_MEDIA_TYPE)
         } catch (e: Exception) {
             Log.e("AppState", "updateTop", e)
             if (_topStations.value.isEmpty()) {
@@ -173,9 +180,51 @@ class AppState(
         preferences.setLastTopUpdate(currentTime())
     }
 
-    private fun findStation(stationName: StationName): Station? {
+    private fun findStationInCache(stationName: StationName): Station? {
         return _topStations.value.find { it.name == stationName }
             ?: _favoriteStations.value.find { it.name == stationName }
+    }
+
+    private suspend fun findStationAtBackend(station: Station): Station? {
+        return try {
+            shoutcastApi.searchStation(
+                search = station.name,
+                limit = 1,
+                bitrate = station.bitrate,
+                mediaType = station.mediaType,
+            ).stations.firstOrNull()
+        } catch (e: Exception) {
+            Log.e("AppState", "Could not find the station.", e)
+            null
+        }
+    }
+
+    private fun updateStation(station: Station) {
+        mainScope.launch(Dispatchers.IO) {
+            tryOrLog("Could not update the station in the DB.") {
+                appDatabase.stationDao().update(station)
+            }
+        }
+        mainScope.launch {
+            val info = playerInfo.value
+            if (info is PlayerInfo.Playing && info.station.name == station.name) {
+                _playerInfo.value = PlayerInfo.Playing(station, info.trackUrl)
+            }
+
+            val top = ArrayList(topStations.value)
+            val indexTop = top.indexOfFirst { it.name == station.name }
+            if (indexTop >= 0) {
+                top[indexTop] = station
+                _topStations.value = top
+            }
+
+            val fav = ArrayList(favoriteStations.value)
+            val indexFav = fav.indexOfFirst { it.name == station.name }
+            if (indexFav >= 0) {
+                fav[indexFav] = station
+                _favoriteStations.value = fav
+            }
+        }
     }
 
     private inline fun tryOrLog(message: String, fn: () -> Unit) {
@@ -183,6 +232,22 @@ class AppState(
             fn()
         } catch (e: Exception) {
             Log.e("AppState", message, e)
+        }
+    }
+
+    private fun runCurrentStationAutoUpdater() {
+        mainScope.launch(Dispatchers.IO) {
+            while (true) {
+                delay(CURRENT_STATION_UPDATE_INTERVAL.millis)
+                val info = playerInfo.value
+                if (info !is PlayerInfo.Playing) {
+                    continue
+                }
+                val updatedStation = findStationAtBackend(info.station)
+                if (updatedStation != null) {
+                    updateStation(updatedStation)
+                }
+            }
         }
     }
 }

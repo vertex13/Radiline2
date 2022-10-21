@@ -4,7 +4,7 @@ import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
 import xyz.skether.radiline.data.backend.type.PlaylistXspf
-import xyz.skether.radiline.data.backend.type.TopStationsXml
+import xyz.skether.radiline.data.backend.type.StationListXml
 import java.lang.reflect.Type
 
 class XmlConverterFactory : Converter.Factory() {
@@ -15,7 +15,7 @@ class XmlConverterFactory : Converter.Factory() {
     ): Converter<ResponseBody, *>? {
         return when (type) {
             PlaylistXspf::class.java -> PlaylistXspfConverter()
-            TopStationsXml::class.java -> TopStationsXmlConverter()
+            StationListXml::class.java -> StationListXmlConverter()
             else -> super.responseBodyConverter(type, annotations, retrofit)
         }
     }

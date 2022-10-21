@@ -3,7 +3,7 @@ package xyz.skether.radiline.ui.view
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
@@ -56,7 +56,7 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
             ) {
                 Text(
                     text = data.currentTrack ?: "",
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                 )
@@ -115,7 +115,7 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
                 }
                 PlayerStatus.PLAYING -> {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Default.Pause,
                         contentDescription = stringResource(R.string.pause),
                         modifier = Modifier
                             .size(controlsSize)

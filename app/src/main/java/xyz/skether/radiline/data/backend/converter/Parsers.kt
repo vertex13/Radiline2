@@ -5,12 +5,12 @@ import org.xmlpull.v1.XmlPullParser.END_TAG
 import org.xmlpull.v1.XmlPullParser.START_TAG
 import xyz.skether.radiline.data.backend.type.PlaylistXspf
 import xyz.skether.radiline.data.backend.type.StationXml
-import xyz.skether.radiline.data.backend.type.TopStationsXml
+import xyz.skether.radiline.data.backend.type.StationListXml
 import xyz.skether.radiline.data.backend.type.TuneInXml
 
 private val ns: String? = null
 
-fun XmlPullParser.parseTopStationsXml(): TopStationsXml {
+fun XmlPullParser.parseTopStationsXml(): StationListXml {
     require(START_TAG, ns, "stationlist")
     var tuneIn: TuneInXml? = null
     val stations = ArrayList<StationXml>()
@@ -21,7 +21,7 @@ fun XmlPullParser.parseTopStationsXml(): TopStationsXml {
             else -> skip()
         }
     }
-    return TopStationsXml(tuneIn, stations)
+    return StationListXml(tuneIn, stations)
 }
 
 fun XmlPullParser.parseTuneInXml(): TuneInXml {

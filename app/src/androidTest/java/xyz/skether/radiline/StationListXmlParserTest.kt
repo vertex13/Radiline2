@@ -6,11 +6,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import xyz.skether.radiline.data.backend.converter.parseTopStationsXml
 import xyz.skether.radiline.data.backend.converter.runXmlPullParser
-import xyz.skether.radiline.data.backend.type.TopStationsXml
+import xyz.skether.radiline.data.backend.type.StationListXml
 
 @RunWith(AndroidJUnit4::class)
-class TopStationsXmlParserTest {
-    private fun parse(filename: String): TopStationsXml {
+class StationListXmlParserTest {
+    private fun parse(filename: String): StationListXml {
         val xmlInputStream = javaClass.classLoader!!.getResourceAsStream(filename)
         return runXmlPullParser(xmlInputStream) { parseTopStationsXml() }
     }

@@ -2,6 +2,7 @@ package xyz.skether.radiline.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import xyz.skether.radiline.data.db.entity.StationEntity
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.domain.StationName
@@ -18,7 +19,14 @@ abstract class StationDao {
     @Query("UPDATE station SET in_favorites = :inFavorites WHERE name = :stationName")
     abstract suspend fun setFavorites(stationName: StationName, inFavorites: Boolean)
 
-    //@Transaction
+    open suspend fun update(station: Station) {
+        update(
+            station.name, station.id, station.genre, station.currentTrack,
+            station.mediaType, station.bitrate, station.numberOfListeners
+        )
+    }
+
+    @Transaction
     open suspend fun updateTop(stations: List<Station>) {
         untopAll()
         stations.forEach {
@@ -38,6 +46,29 @@ abstract class StationDao {
 
     @Query("UPDATE station SET is_top = 0")
     protected abstract suspend fun untopAll()
+
+    @Query(
+        """
+        UPDATE station SET
+          id = :id,
+          genre = :genre,
+          current_track = :currentTrack,
+          media_type = :mediaType,
+          bitrate = :bitrate,
+          number_of_listeners = :numberOfListeners
+        WHERE
+          name = :name
+        """
+    )
+    protected abstract suspend fun update(
+        name: StationName,
+        id: Long,
+        genre: String,
+        currentTrack: String?,
+        mediaType: String,
+        bitrate: Int,
+        numberOfListeners: Int
+    )
 
     @Query(
         """
