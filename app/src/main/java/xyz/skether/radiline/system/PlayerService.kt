@@ -14,11 +14,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import xyz.skether.logger.logE
-import xyz.skether.radiline.MainActivity
 import xyz.skether.radiline.PLAYER_NOTIF_CHANNEL_ID
 import xyz.skether.radiline.R
 import xyz.skether.radiline.app
 import xyz.skether.radiline.domain.*
+import xyz.skether.radiline.ui.MainActivity
 
 private const val NOTIFICATION_ID = 854939
 

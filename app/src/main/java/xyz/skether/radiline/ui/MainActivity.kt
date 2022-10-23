@@ -1,4 +1,4 @@
-package xyz.skether.radiline
+package xyz.skether.radiline.ui
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import xyz.skether.radiline.app
 import xyz.skether.radiline.system.AppContext
 import xyz.skether.radiline.ui.theme.RadilineTheme
 import xyz.skether.radiline.ui.view.MainScreen
