@@ -153,7 +153,7 @@ class PlayerService : Service() {
         isPlaying: Boolean,
     ): Notification {
         val builder = NotificationCompat.Builder(this, PLAYER_NOTIF_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_play)
+            .setSmallIcon(R.drawable.ic_notification_logo)
             .setContentTitle(station.name)
             .setContentText(station.currentTrack)
             .setShowWhen(false)

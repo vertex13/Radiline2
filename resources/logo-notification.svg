@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866666 33.866666"
+   version="1.1"
+   id="svg242"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="notification-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview244"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="0.49260384"
+     inkscape:cx="-656.71433"
+     inkscape:cy="-418.18594"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid363"
+       spacingx="1.0583333"
+       spacingy="1.0583333"
+       color="#3e9399"
+       opacity="0.6627451"
+       empcolor="#be0012"
+       empopacity="0.62352941"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs239" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:13.7698;stroke-linecap:round;stroke-linejoin:bevel;paint-order:stroke markers fill"
+       id="rect417"
+       width="8.4666662"
+       height="6.3499994"
+       x="2.1655693e-07"
+       y="13.758334" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:13.7698;stroke-linecap:round;stroke-linejoin:bevel;paint-order:stroke markers fill"
+       id="rect417-3"
+       width="8.4666662"
+       height="6.349999"
+       x="25.4"
+       y="13.758333" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:21.772;stroke-linecap:round;stroke-linejoin:bevel;paint-order:stroke markers fill"
+       id="rect1235"
+       width="5.2916665"
+       height="25.4"
+       x="10.583333"
+       y="4.2333326" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:21.772;stroke-linecap:round;stroke-linejoin:bevel;paint-order:stroke markers fill"
+       id="rect1237"
+       width="5.291666"
+       height="25.4"
+       x="17.991667"
+       y="4.2333326" />
+  </g>
+</svg>
