@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun Preview() {
-    RadilineTheme {
+    RadilineTheme(dynamicColor = false) {
         MainScreen(previewMainScreenDataHolder())
     }
 }

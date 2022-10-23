@@ -15,7 +15,6 @@ import xyz.skether.radiline.domain.Play
 import xyz.skether.radiline.ui.FavoriteStationsItemData
 import xyz.skether.radiline.ui.TopStationItemDataWithoutFavorites
 import xyz.skether.radiline.ui.asState
-import xyz.skether.radiline.ui.theme.FavoriteStationColor
 
 class MainScreenDataHolder(
     val favoriteStationsItemData: FavoriteStationsItemData,
@@ -29,7 +28,11 @@ class MainScreenDataHolder(
 fun MainScreen(dataHolder: MainScreenDataHolder) {
     Scaffold { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            val favCardColors = CardDefaults.cardColors(containerColor = FavoriteStationColor)
+            val colorScheme = MaterialTheme.colorScheme
+            val favCardColors = CardDefaults.cardColors(
+                containerColor = colorScheme.secondaryContainer,
+                contentColor = colorScheme.onSecondaryContainer,
+            )
             val favorites by dataHolder.favoriteStationsItemData.asState()
             val top by dataHolder.topStationItemDataWithoutFavorites.asState()
             LazyColumn(

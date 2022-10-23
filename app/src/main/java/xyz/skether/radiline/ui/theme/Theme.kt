@@ -3,11 +3,7 @@ package xyz.skether.radiline.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
@@ -15,26 +11,50 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val LightColorScheme = lightColorScheme(
+    primary = PaletteTokens.Primary40,
+    onPrimary = PaletteTokens.Primary100,
+    primaryContainer = PaletteTokens.Primary90,
+    onPrimaryContainer = PaletteTokens.Primary10,
+    inversePrimary = PaletteTokens.Primary80,
+
+    secondary = PaletteTokens.Secondary40,
+    onSecondary = PaletteTokens.Secondary100,
+    secondaryContainer = PaletteTokens.Secondary90,
+    onSecondaryContainer = PaletteTokens.Secondary10,
+
+    tertiary = PaletteTokens.Tertiary40,
+    onTertiary = PaletteTokens.Tertiary100,
+    tertiaryContainer = PaletteTokens.Tertiary90,
+    onTertiaryContainer = PaletteTokens.Tertiary10,
+
+    background = PaletteTokens.Neutral99,
+    onBackground = PaletteTokens.Neutral10,
+    surface = PaletteTokens.Neutral99,
+    onSurface = PaletteTokens.Neutral10,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+private val DarkColorScheme = darkColorScheme(
+    primary = PaletteTokens.Primary80,
+    onPrimary = PaletteTokens.Primary20,
+    primaryContainer = PaletteTokens.Primary30,
+    onPrimaryContainer = PaletteTokens.Primary90,
+    inversePrimary = PaletteTokens.Primary40,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondary = PaletteTokens.Secondary80,
+    onSecondary = PaletteTokens.Secondary20,
+    secondaryContainer = PaletteTokens.Secondary30,
+    onSecondaryContainer = PaletteTokens.Secondary90,
+
+    tertiary = PaletteTokens.Tertiary80,
+    onTertiary = PaletteTokens.Tertiary20,
+    tertiaryContainer = PaletteTokens.Tertiary30,
+    onTertiaryContainer = PaletteTokens.Tertiary90,
+
+    background = PaletteTokens.Neutral10,
+    onBackground = PaletteTokens.Neutral90,
+    surface = PaletteTokens.Neutral10,
+    onSurface = PaletteTokens.Neutral90,
 )
 
 @Composable

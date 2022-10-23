@@ -47,7 +47,6 @@ fun StationItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Right,
                 modifier = Modifier.constrainAs(genre) {
                     top.linkTo(name.bottom)
@@ -57,7 +56,6 @@ fun StationItem(
             Text(
                 text = stringResource(R.string.bitrate, station.bitrate),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
                 maxLines = 1,
                 modifier = Modifier.constrainAs(bitrate) {
                     top.linkTo(name.bottom)

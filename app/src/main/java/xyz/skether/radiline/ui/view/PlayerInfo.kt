@@ -19,8 +19,6 @@ import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.*
 import xyz.skether.radiline.ui.PlayerInfoDataValue
 import xyz.skether.radiline.ui.asState
-import xyz.skether.radiline.ui.theme.FavoriteStarColor
-import xyz.skether.radiline.ui.theme.NotFavoriteStarColor
 
 data class PlayerInfoData(
     val stationName: StationName,
@@ -41,8 +39,14 @@ class PlayerInfoDataHolder(
 
 @Composable
 fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) {
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
     val data = dataHolder.playerInfoDataValue.asState().value ?: return
     ElevatedCard(
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = colorScheme.primaryContainer,
+            contentColor = colorScheme.onPrimaryContainer,
+        ),
         modifier = modifier
     ) {
         Row(
@@ -56,10 +60,11 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
             ) {
                 Text(
                     text = data.currentTrack ?: "",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = typography.headlineSmall,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth(),
@@ -69,7 +74,7 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
                         Icon(
                             Icons.Filled.Star,
                             contentDescription = stringResource(R.string.remove_from_favorites),
-                            tint = FavoriteStarColor,
+                            tint = colorScheme.primary,
                             modifier = Modifier
                                 .size(favSize)
                                 .clickable { dataHolder.removeFromFavorites(data.stationName) }
@@ -78,7 +83,7 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
                         Icon(
                             Icons.TwoTone.Star,
                             contentDescription = stringResource(R.string.add_to_favorites),
-                            tint = NotFavoriteStarColor,
+                            tint = colorScheme.inversePrimary,
                             modifier = Modifier
                                 .size(favSize)
                                 .clickable { dataHolder.addToFavorites(data.stationName) }
@@ -87,7 +92,7 @@ fun PlayerInfo(dataHolder: PlayerInfoDataHolder, modifier: Modifier = Modifier) 
 
                     Text(
                         text = data.stationName,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = typography.bodyMedium,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2,
                         modifier = Modifier.padding(4.dp)
