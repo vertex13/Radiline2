@@ -8,10 +8,11 @@ def localProps = new Properties()
 localProps.load(new FileInputStream(rootProject.file("local.properties")))
 
 android {
+    namespace 'com.github.vertex13.radiline'
     compileSdk 33
 
     defaultConfig {
-        applicationId "xyz.skether.radiline"
+        applicationId "com.github.vertex13.radiline"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -52,7 +53,6 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace 'xyz.skether.radiline'
 }
 
 dependencies {
