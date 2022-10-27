@@ -4,18 +4,24 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import android.os.StrictMode.VmPolicy
 import com.github.vertex13.radiline.dependency.Dependencies
-import com.github.vertex13.radiline.logger.BuildConfig
 import com.github.vertex13.radiline.logger.EmptyLogger
 import com.github.vertex13.radiline.logger.LogcatLogger
 import com.github.vertex13.radiline.logger.initLogger
 import com.github.vertex13.radiline.system.AppContext
+
 
 class RadilineApp : Application() {
     lateinit var dependencies: Dependencies
         private set
 
     override fun onCreate() {
+        if (BuildConfig.DEBUG) {
+            enableStrictMode()
+        }
         super.onCreate()
         setupLogger()
         dependencies = Dependencies(AppContext.from(this))
@@ -42,6 +48,25 @@ class RadilineApp : Application() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
         }
+    }
+
+    private fun enableStrictMode() {
+        StrictMode.setThreadPolicy(
+            ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )
+        StrictMode.setVmPolicy(
+            VmPolicy.Builder()
+                .detectLeakedRegistrationObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectActivityLeaks()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )
     }
 }
 

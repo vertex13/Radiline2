@@ -17,10 +17,9 @@ class AppSharedPreferences(
     appContext: AppContext,
 ) : Preferences {
 
-    private val prefs: SharedPreferences = appContext.value.getSharedPreferences(
-        "app.pref",
-        Context.MODE_PRIVATE
-    )
+    private val prefs: SharedPreferences by lazy {
+        appContext.value.getSharedPreferences("app.pref", Context.MODE_PRIVATE)
+    }
 
     override fun getLastTopUpdate(): Time {
         return Time(prefs.getLong(LAST_TOP_UPDATE, 0L))
