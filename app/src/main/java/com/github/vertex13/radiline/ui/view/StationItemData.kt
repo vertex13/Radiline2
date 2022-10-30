@@ -1,10 +1,12 @@
 package com.github.vertex13.radiline.ui.view
 
 import com.github.vertex13.radiline.domain.Station
+import com.github.vertex13.radiline.ui.GetAppContext
 
 class StationItemData(
     station: Station,
     val isPlaying: Boolean,
+    val getAppContext: GetAppContext,
 ) {
     val id: Long = station.id
     val name: String = station.name

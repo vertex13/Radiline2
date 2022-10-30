@@ -30,6 +30,7 @@ import com.github.vertex13.radiline.system.UrlAudioPlayer
 import com.github.vertex13.radiline.system.runPlayerService
 import com.github.vertex13.radiline.ui.FavoriteStationsItemData
 import com.github.vertex13.radiline.ui.FavoriteStationsNames
+import com.github.vertex13.radiline.ui.GetAppContext
 import com.github.vertex13.radiline.ui.PlayerInfoDataValue
 import com.github.vertex13.radiline.ui.PlayingStationName
 import com.github.vertex13.radiline.ui.TopStationItemDataWithoutFavorites
@@ -75,6 +76,9 @@ class Dependencies(
             runPlayer = runPlayer,
         )
     }
+    private val getAppContext: GetAppContext by lazy {
+        { appContext }
+    }
     private val playingStationName: PlayingStationName by lazy {
         transformPlayingStationName(playerInfoValue)
     }
@@ -85,11 +89,11 @@ class Dependencies(
         transformFavoriteStationNames(favoriteStations)
     }
     private val favoriteStationsItemData: FavoriteStationsItemData by lazy {
-        transformFavoriteStationsItemData(favoriteStations, playingStationName)
+        transformFavoriteStationsItemData(getAppContext, favoriteStations, playingStationName)
     }
     private val topStationItemDataWithoutFavorites: TopStationItemDataWithoutFavorites by lazy {
         transformTopStationsItemDataWithoutFavorites(
-            topStations, favoriteStationsNames, playingStationName
+            getAppContext, topStations, favoriteStationsNames, playingStationName
         )
     }
     private val playerInfoValue: PlayerInfoValue

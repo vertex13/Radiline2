@@ -1,5 +1,6 @@
 buildscript {
     ext {
+        androidx_core = '1.9.0'
         compose_version = '1.2.1'
         room_version = '2.4.3'
     }

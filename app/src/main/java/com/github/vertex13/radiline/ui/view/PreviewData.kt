@@ -15,7 +15,7 @@ class PreviewStation(
 ) : Station
 
 fun previewStationItemData(id: Long = 49384L): StationItemData {
-    return StationItemData(PreviewStation(id), false)
+    return StationItemData(PreviewStation(id), false) { error("Should not be called.") }
 }
 
 fun previewStationItemDataList(size: Int, fromId: Long = 1L): List<StationItemData> {
