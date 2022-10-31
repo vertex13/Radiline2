@@ -1,5 +1,6 @@
 package com.github.vertex13.radiline.data
 
+import com.github.vertex13.radiline.TOP_STATIONS_LIMIT
 import com.github.vertex13.radiline.data.backend.PlaylistRetrofitApi
 import com.github.vertex13.radiline.data.backend.ShoutcastRetrofitApi
 import com.github.vertex13.radiline.data.db.AppDatabase
@@ -20,7 +21,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val SUPPORTED_MEDIA_TYPE = "audio/mpeg"
-private const val TOP_LIMIT = 50
 private val CURRENT_STATION_UPDATE_INTERVAL = Time(20L * 1000L) // 20 seconds
 private val TOP_UPDATE_INTERVAL = Time(6L * 60L * 60L * 1000L) // 6 hours
 
@@ -173,7 +173,10 @@ class AppState(
 
     private suspend fun updateTop() = mainScope.launch(Dispatchers.IO) {
         val topXml = try {
-            shoutcastApi.getTopStations(limit = TOP_LIMIT, mediaType = SUPPORTED_MEDIA_TYPE)
+            shoutcastApi.getTopStations(
+                limit = TOP_STATIONS_LIMIT,
+                mediaType = SUPPORTED_MEDIA_TYPE
+            )
         } catch (e: Exception) {
             logE("Could not get top stations.", e)
             if (_topStations.value.isEmpty()) {
